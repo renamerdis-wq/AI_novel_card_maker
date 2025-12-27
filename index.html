@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>노블 카드 생성기 V34</title>
+  <title>노블 카드 생성기 V35</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
   <style>
     /* 폰트 로드 */
@@ -36,11 +36,14 @@
     .style-section { display: none; flex-direction: column; gap: 12px; }
     .style-section.active { display: flex; }
     
-    /* 배경 모드 섹션 (항상 보이거나 토글됨) */
+    /* 배경 모드 섹션 */
     .bg-mode-section { display: flex; flex-direction: column; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 5px; }
     .bg-mode-section.hidden { display: none; }
 
     .style-row { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #475569; }
+    .slider-row { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+    .slider-label { min-width: 40px; color: #64748b; }
+    
     .mini-color-row { display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; flex: 1; }
     .mini-preview { width: 24px; height: 24px; border-radius: 4px; border: 1px solid #ddd; position: relative; overflow: hidden; flex-shrink: 0; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNmZmYiLz48cGF0aCBkPSJNTAgMEg0VjBIMHY0aDR2NHoiIGZpbGw9IiNjY2MiLz48L3N2Zz4='); }
     .mini-color-layer { width:100%; height:100%; }
@@ -130,7 +133,7 @@
 
   <div class="editor-area">
     <div class="editor-header-bar" onclick="toggleEditor()">
-      <div class="editor-title"><span id="foldIcon">🔽</span> 카드 에디터 V34</div>
+      <div class="editor-title"><span id="foldIcon">🔽</span> 카드 에디터 V35</div>
       <div style="display:flex; gap:8px;">
         <button class="btn-fold" onclick="toggleEditor(); event.stopPropagation();">접기/펼치기</button>
         <button class="btn-save" onclick="event.stopPropagation(); saveImage()">📸 저장</button>
@@ -181,13 +184,25 @@
              <div class="style-row"><span>🖼️ 배경 이미지 설정:</span></div>
              <button class="btn-style" style="width:100%;" onclick="document.getElementById('bgImgFileInput').click()">📂 이미지 선택</button>
              <input type="file" id="bgImgFileInput" accept="image/*" onchange="handleBgUpload(this)">
+             
              <div class="style-row" style="margin-top:5px;">
-               <span>이미지 크기 (Fit):</span>
-               <div style="display:flex; gap:5px;">
+               <div style="display:flex; justify-content:space-between;">
+                   <span>이미지 조정:</span>
+                   <button class="btn-sm" onclick="resetBgPos()">🔄 초기화</button>
+               </div>
+               
+               <div class="style-row" style="background:#fff; padding:8px; border-radius:6px; border:1px solid #cbd5e1;">
+                   <div class="slider-row"><span class="slider-label">크기:</span><input type="range" id="bgScale" min="10" max="250" value="100" style="flex:1" oninput="updatePreview()"></div>
+                   <div class="slider-row"><span class="slider-label">가로:</span><input type="range" id="bgPosX" min="0" max="100" value="50" style="flex:1" oninput="updatePreview()"></div>
+                   <div class="slider-row"><span class="slider-label">세로:</span><input type="range" id="bgPosY" min="0" max="100" value="50" style="flex:1" oninput="updatePreview()"></div>
+               </div>
+               
+               <div style="display:flex; gap:5px; margin-top:5px;">
                  <button class="btn-fit" id="btnCover" onclick="setBgSize('cover')">채우기 (Cover)</button>
                  <button class="btn-fit active" id="btnContain" onclick="setBgSize('contain')">맞춤 (Contain)</button>
                </div>
              </div>
+             
              <div class="style-row"><span>오버레이 색상:</span><div class="overlay-colors"><div class="btn-overlay selected" style="background:#000;" onclick="setOverlay('#000000',this)"></div><div class="btn-overlay" style="background:#0f172a;" onclick="setOverlay('#0f172a',this)"></div><div class="btn-overlay" style="background:#fff;" onclick="setOverlay('#ffffff',this)"></div></div></div>
              <div class="style-row"><span>오버레이 불투명도:</span><input type="range" id="overlayAlpha" style="width:100%;" min="0" max="1" step="0.05" value="0.5" oninput="updatePreview()"></div>
           </div>
@@ -246,13 +261,14 @@
       { name: '피치', bg1:'#fff1f2', bg2:'#fff7ed', text:'#881337', hlbg:'#fda4af', hltx:'#881337', th:'#be123c', it:'#be123c', bd:'#881337', qt:'#9f1239' },
       { name: '숲속', bg1:'#f0fdf4', bg2:'#dcfce7', text:'#14532d', hlbg:'#86efac', hltx:'#052e16', th:'#15803d', it:'#15803d', bd:'#14532d', qt:'#166534' }
     ];
-    let bgState = { mode:'gradient', imgData:null, size:'contain', overlayColor:'#000000' };
+    // V35: 배경 조정용 상태 추가 (scale, posX, posY)
+    let bgState = { mode:'gradient', imgData:null, sizeMode:'contain', overlayColor:'#000000', scale:100, posX:50, posY:50 };
     let insertTargetIndex = -1;
 
     let blocks = [{type:'text', content:
-`>> V34 업데이트!
-배경 이미지를 쓰면서 그라데이션 색도 바꿀 수 있어.
-'사용자 프리셋' 기능도 추가됐어!
+`>> V35 업데이트!
+이제 배경 이미지의 위치와 크기를 마음대로 조절할 수 있어.
+박스를 추가해도 '추출' 기능이 잘 작동해!
 
 *별표*는 이탤릭, **쌍별표**는 강조!`, width:100}];
 
@@ -337,7 +353,7 @@
       updatePreview();
     }
 
-    // --- 3. 미리보기 (배경 로직 V34: 그라데이션 항상 렌더링) ---
+    // --- 3. 미리보기 (V35: 배경 상세 컨트롤) ---
     function hexToRgba(hex, alpha) {
         let r=0,g=0,b=0;
         if(hex.length===4){r=parseInt(hex[1]+hex[1],16);g=parseInt(hex[2]+hex[2],16);b=parseInt(hex[3]+hex[3],16);}
@@ -362,24 +378,38 @@
       const c2 = hexToRgba(colors.bg2, 1);
       const gradLayer = `linear-gradient(${ang}deg, ${c1} 0%, ${c2} 100%)`;
 
+      // V35: 슬라이더 값 읽기
+      const scaleVal = document.getElementById('bgScale').value;
+      const posX = document.getElementById('bgPosX').value;
+      const posY = document.getElementById('bgPosY').value;
+      
+      // bgState 업데이트
+      bgState.scale = scaleVal;
+      bgState.posX = posX;
+      bgState.posY = posY;
+
       let bgStyle = '';
       
-      // 이미지가 있고, 이미지 모드가 켜져있으면
       if (bgState.mode === 'image' && bgState.imgData) {
         const al = document.getElementById('overlayAlpha').value;
         const ov = bgState.overlayColor;
         const ovRgba = hexToRgba(ov, al);
         const overlayLayer = `linear-gradient(${ovRgba}, ${ovRgba})`;
         
-        // 오버레이 -> 이미지 -> 그라데이션 순서로 겹침
+        // 사이즈 결정 로직: 버튼(contain/cover)을 우선하되, 슬라이더가 움직이면 슬라이더 값 반영?
+        // -> 슬라이더 값을 'width' 퍼센트로 사용. (100% = contain 비슷, 150% = 확대)
+        // cover/contain 모드는 슬라이더를 특정 값으로 리셋하는 역할로 변경
+        
+        const finalSize = `${bgState.scale}% auto`; 
+        const finalPos = `${bgState.posX}% ${bgState.posY}%`;
+
         bgStyle = `
           background-image: ${overlayLayer}, url('${bgState.imgData}'), ${gradLayer};
-          background-size: 100% 100%, ${bgState.size}, 100% 100%;
-          background-position: center, center, center;
+          background-size: 100% 100%, ${finalSize}, 100% 100%;
+          background-position: center, ${finalPos}, center;
           background-repeat: no-repeat, no-repeat, no-repeat;
         `;
       } else {
-        // 이미지 없이 그라데이션만
         bgStyle = `background: ${gradLayer};`;
       }
 
@@ -410,7 +440,6 @@
         event.target.classList.add('active'); 
     }
 
-    // V34: 이미지 패널 토글 (그라데이션 패널은 항상 유지)
     function toggleImgPanel(isChecked){ 
         bgState.mode = isChecked ? 'image' : 'gradient';
         const panel = document.getElementById('img-controls');
@@ -419,14 +448,37 @@
         updatePreview();
     }
 
-    function setBgSize(s){ bgState.size=s; document.getElementById('btnCover').className=s==='cover'?'btn-fit active':'btn-fit'; document.getElementById('btnContain').className=s==='contain'?'btn-fit active':'btn-fit'; updatePreview(); }
+    // V35: 사이즈 모드 (Cover/Contain 버튼 클릭 시 슬라이더 값 강제 조정)
+    function setBgSize(s){ 
+        bgState.sizeMode=s; 
+        document.getElementById('btnCover').className=s==='cover'?'btn-fit active':'btn-fit'; 
+        document.getElementById('btnContain').className=s==='contain'?'btn-fit active':'btn-fit'; 
+        
+        // 슬라이더 값 자동 세팅 (편의성)
+        const scaleSlider = document.getElementById('bgScale');
+        if(s === 'cover') scaleSlider.value = 150; // 대략 꽉 차게
+        else scaleSlider.value = 100; // 대략 맞게
+        
+        // 위치도 중앙으로 리셋
+        resetBgPos();
+        updatePreview(); 
+    }
+
+    function resetBgPos() {
+        document.getElementById('bgPosX').value = 50;
+        document.getElementById('bgPosY').value = 50;
+        updatePreview();
+    }
+
     function handleBgUpload(i){ const f=i.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{bgState.imgData=e.target.result; 
-        document.getElementById('showImgOption').checked = true; // 자동 체크
+        document.getElementById('showImgOption').checked = true; 
         toggleImgPanel(true);
+        // 이미지 업로드 시 기본 contain으로 리셋
+        setBgSize('contain');
     }; r.readAsDataURL(f); }
     function setOverlay(c,b){ bgState.overlayColor=c; document.querySelectorAll('.btn-overlay').forEach(el=>el.classList.remove('selected')); b.classList.add('selected'); updatePreview(); }
     
-    // --- 4. 프리셋 로직 (V34) ---
+    // --- 4. 프리셋 로직 ---
     function initPresets(){ 
         const c=document.getElementById('presetList'); c.innerHTML='';
         presets.forEach((p, idx)=>{ 
@@ -434,15 +486,11 @@
             b.style.background=`linear-gradient(135deg, ${p.bg1}, ${p.bg2})`; 
             b.title = p.name || '프리셋';
             b.onclick=()=>{colors={...colors,...p}; updateUI(); updatePreview();};
-            
-            // 기본 7개 이후는 사용자 정의 -> 삭제 가능
             if(idx >= 7) {
                 b.classList.add('deletable');
                 b.onclick = (e) => {
-                    // X 버튼 영역 클릭 체크 (간단히 구현)
                     const rect = b.getBoundingClientRect();
                     const isX = (e.clientX - rect.right) > -15 && (e.clientY - rect.top) < 15;
-                    
                     if (isX && confirm('이 프리셋을 삭제할까?')) {
                         e.stopPropagation();
                         presets.splice(idx, 1);
@@ -494,7 +542,7 @@
             }
         };
         reader.readAsText(file);
-        input.value = ''; // 초기화
+        input.value = '';
     }
     
     function addBlock(t){ blocks.push({type:t, content:''}); renderBlocks(); updatePreview(); }
@@ -509,16 +557,51 @@
     function toggleSource(i){ document.getElementById(`source-${i}`).classList.toggle('show'); }
     function toggleEditor(){ document.getElementById('editorContent').classList.toggle('collapsed'); document.getElementById('styleBody').style.display='none'; }
     function toggleStylePanel(){ const s=document.getElementById('styleBody'); s.style.display=s.style.display==='none'?'block':'none'; if(s.style.display==='block') document.getElementById('editorContent').classList.remove('collapsed'); }
+    
+    // V35: 스마트 추출 개선 (무조건 알림, 모든 박스 대응)
     function smartExtract(i){ 
         const c=blocks[i].content;
-        const w = new DOMParser().parseFromString(c,'text/html').body.firstElementChild;
-        if(w) {
-            if(w.style && w.style.background){ const m=w.style.background.match(/#(?:[0-9a-fA-F]{3}){1,2}/g); if(m&&m.length>=2){setColor('bg1',m[0]);setColor('bg2',m[1]);} }
-            blocks[i].content=w.innerHTML.trim(); renderBlocks(); updateTextContent(i,blocks[i].content);
+        // HTML 파싱 시도
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(c, 'text/html');
+        const el = doc.body.firstElementChild; // 태그가 있으면 잡힘
+
+        let foundColor = false;
+        let c1, c2;
+
+        // 1. 태그의 스타일 속성 확인
+        if(el && el.style && el.style.background){
+             const m = el.style.background.match(/#(?:[0-9a-fA-F]{3}){1,2}/g);
+             if(m && m.length >= 2){
+                 c1 = m[0]; c2 = m[1];
+                 foundColor = true;
+             }
+        }
+        
+        // 2. 텍스트 내용 안에서 색상 코드 확인 (보조 수단)
+        if(!foundColor) {
+            const m = c.match(/#(?:[0-9a-fA-F]{3}){1,2}/g);
+             if(m && m.length >= 2){
+                 c1 = m[0]; c2 = m[1];
+                 foundColor = true;
+             }
+        }
+
+        if(foundColor) {
+            if(confirm(`배경색을 감지했어!\n시작: ${c1}, 끝: ${c2}\n적용할까?`)) {
+                setColor('bg1', c1);
+                setColor('bg2', c2);
+                // 내용에서 태그 제거하고 텍스트만 남기기 (선택사항)
+                if(el) {
+                    blocks[i].content = el.innerHTML.trim();
+                    renderBlocks();
+                }
+            }
         } else {
-            alert("추출할 구조가 없습니다.");
+            alert("이 박스에서는 추출할 수 있는 배경색 정보(HTML 스타일 등)를 못 찾았어 😭");
         }
     }
+    
     function saveImage(){ const e=document.getElementById("capture-area").firstElementChild, b=document.querySelector('.btn-save'), t=b.innerText; b.innerText="⏳..."; htmlToImage.toPng(e,{pixelRatio:2}).then(u=>{const a=document.createElement('a');a.download='novel.png';a.href=u;a.click();b.innerText=t;}); }
   </script>
 </body>
