@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>노블 카드 생성기 V35</title>
+  <title>노블 카드 생성기 V35 (Fix)</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
   <style>
     /* 폰트 로드 */
@@ -371,13 +371,11 @@
       const itStyle = isPlain ? 'normal' : 'italic';
       const itWeight = isPlain ? '400' : '700'; 
       const activeItalicColor = isPlain ? colors.text : colors.it;
-
       // 배경 생성
       const ang = document.getElementById('gradAngle').value;
       const c1 = hexToRgba(colors.bg1, 1);
       const c2 = hexToRgba(colors.bg2, 1);
       const gradLayer = `linear-gradient(${ang}deg, ${c1} 0%, ${c2} 100%)`;
-
       // V35: 슬라이더 값 읽기
       const scaleVal = document.getElementById('bgScale').value;
       const posX = document.getElementById('bgPosX').value;
@@ -395,12 +393,12 @@
         const ov = bgState.overlayColor;
         const ovRgba = hexToRgba(ov, al);
         const overlayLayer = `linear-gradient(${ovRgba}, ${ovRgba})`;
-        
         // 사이즈 결정 로직: 버튼(contain/cover)을 우선하되, 슬라이더가 움직이면 슬라이더 값 반영?
-        // -> 슬라이더 값을 'width' 퍼센트로 사용. (100% = contain 비슷, 150% = 확대)
+        // -> 슬라이더 값을 'width' 퍼센트로 사용.
+        // (100% = contain 비슷, 150% = 확대)
         // cover/contain 모드는 슬라이더를 특정 값으로 리셋하는 역할로 변경
         
-        const finalSize = `${bgState.scale}% auto`; 
+        const finalSize = `${bgState.scale}% auto`;
         const finalPos = `${bgState.posX}% ${bgState.posY}%`;
 
         bgStyle = `
@@ -427,7 +425,7 @@
     
     function updateUI(){ 
         for(const[k,v] of Object.entries(colors)){ 
-            const p=document.getElementById(k+'-pv'),t=document.getElementById(k+'-txt'); 
+            const p=document.getElementById(k+'-pv'),t=document.getElementById(k+'-txt');
             if(p)p.style.backgroundColor=v; 
             if(t)t.value=v;
         } 
@@ -450,7 +448,7 @@
 
     // V35: 사이즈 모드 (Cover/Contain 버튼 클릭 시 슬라이더 값 강제 조정)
     function setBgSize(s){ 
-        bgState.sizeMode=s; 
+        bgState.sizeMode=s;
         document.getElementById('btnCover').className=s==='cover'?'btn-fit active':'btn-fit'; 
         document.getElementById('btnContain').className=s==='contain'?'btn-fit active':'btn-fit'; 
         
@@ -471,7 +469,7 @@
     }
 
     function handleBgUpload(i){ const f=i.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{bgState.imgData=e.target.result; 
-        document.getElementById('showImgOption').checked = true; 
+        document.getElementById('showImgOption').checked = true;
         toggleImgPanel(true);
         // 이미지 업로드 시 기본 contain으로 리셋
         setBgSize('contain');
@@ -480,7 +478,8 @@
     
     // --- 4. 프리셋 로직 ---
     function initPresets(){ 
-        const c=document.getElementById('presetList'); c.innerHTML='';
+        const c=document.getElementById('presetList');
+        c.innerHTML='';
         presets.forEach((p, idx)=>{ 
             const b=document.createElement('div'); b.className='btn-preset'; 
             b.style.background=`linear-gradient(135deg, ${p.bg1}, ${p.bg2})`; 
@@ -548,17 +547,21 @@
     function addBlock(t){ blocks.push({type:t, content:''}); renderBlocks(); updatePreview(); }
     function addImgBlock(i){ const f=i.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{blocks.push({type:'image',content:e.target.result});renderBlocks();updatePreview();i.value='';}; r.readAsDataURL(f); }
     function delBlock(i){ if(confirm('삭제?')){blocks.splice(i,1); renderBlocks(); updatePreview();} }
-    function splitBlock(e,i){ const t=document.getElementById('editor-'+i); if(!t)return; const v=t.value, p=t.selectionStart; blocks[i].content=v.substring(0,p); blocks.splice(i+1,0,{type:'text',content:v.substring(p)}); renderBlocks(); updatePreview(); }
-    function mergeUp(i){ if(confirm('합치기?')){blocks[i-1].content+="\n"+blocks[i].content; blocks.splice(i,1); renderBlocks(); updatePreview();} }
+    function splitBlock(e,i){ const t=document.getElementById('editor-'+i); if(!t)return;
+    const v=t.value, p=t.selectionStart; blocks[i].content=v.substring(0,p); blocks.splice(i+1,0,{type:'text',content:v.substring(p)}); renderBlocks(); updatePreview(); }
+    function mergeUp(i){ if(confirm('합치기?')){blocks[i-1].content+="\n"+blocks[i].content; blocks.splice(i,1); renderBlocks();
+    updatePreview();} }
     function moveBlock(i,d){ const n=i+d; if(n<0||n>=blocks.length)return; [blocks[i],blocks[n]]=[blocks[n],blocks[i]]; renderBlocks(); updatePreview(); }
-    function updateImgWidth(i,v){ blocks[i].width=v; updatePreview(); }
+    function updateImgWidth(i,v){ blocks[i].width=v;
+    updatePreview(); }
     function triggerInsertImage(i){ insertTargetIndex=i; document.getElementById('insertImgFileInput').click(); }
-    function handleInsertImgUpload(i){ const f=i.files[0]; if(!f)return; const r=new FileReader(); r.onload=e=>{blocks.splice(insertTargetIndex+1,0,{type:'image',content:e.target.result,width:100}); renderBlocks(); updatePreview(); i.value='';}; r.readAsDataURL(f); }
+    function handleInsertImgUpload(i){ const f=i.files[0]; if(!f)return;
+    const r=new FileReader(); r.onload=e=>{blocks.splice(insertTargetIndex+1,0,{type:'image',content:e.target.result,width:100}); renderBlocks(); updatePreview(); i.value='';}; r.readAsDataURL(f); }
     function toggleSource(i){ document.getElementById(`source-${i}`).classList.toggle('show'); }
     function toggleEditor(){ document.getElementById('editorContent').classList.toggle('collapsed'); document.getElementById('styleBody').style.display='none'; }
     function toggleStylePanel(){ const s=document.getElementById('styleBody'); s.style.display=s.style.display==='none'?'block':'none'; if(s.style.display==='block') document.getElementById('editorContent').classList.remove('collapsed'); }
     
-    // V35: 스마트 추출 개선 (무조건 알림, 모든 박스 대응)
+    // V35: 스마트 추출 개선 (이미지 모드 자동 해제 추가)
     function smartExtract(i){ 
         const c=blocks[i].content;
         // HTML 파싱 시도
@@ -573,7 +576,8 @@
         if(el && el.style && el.style.background){
              const m = el.style.background.match(/#(?:[0-9a-fA-F]{3}){1,2}/g);
              if(m && m.length >= 2){
-                 c1 = m[0]; c2 = m[1];
+                 c1 = m[0];
+                 c2 = m[1];
                  foundColor = true;
              }
         }
@@ -582,15 +586,24 @@
         if(!foundColor) {
             const m = c.match(/#(?:[0-9a-fA-F]{3}){1,2}/g);
              if(m && m.length >= 2){
-                 c1 = m[0]; c2 = m[1];
+                 c1 = m[0];
+                 c2 = m[1];
                  foundColor = true;
              }
         }
 
         if(foundColor) {
             if(confirm(`배경색을 감지했어!\n시작: ${c1}, 끝: ${c2}\n적용할까?`)) {
+                // ✨ [수정됨] 이미지 모드가 켜져있다면 끄고 그라데이션 모드로 전환!
+                const imgCheck = document.getElementById('showImgOption');
+                if(imgCheck && imgCheck.checked) {
+                    imgCheck.checked = false;
+                    toggleImgPanel(false); // 패널 숨기고 모드 변경
+                }
+
                 setColor('bg1', c1);
                 setColor('bg2', c2);
+                
                 // 내용에서 태그 제거하고 텍스트만 남기기 (선택사항)
                 if(el) {
                     blocks[i].content = el.innerHTML.trim();
@@ -602,7 +615,8 @@
         }
     }
     
-    function saveImage(){ const e=document.getElementById("capture-area").firstElementChild, b=document.querySelector('.btn-save'), t=b.innerText; b.innerText="⏳..."; htmlToImage.toPng(e,{pixelRatio:2}).then(u=>{const a=document.createElement('a');a.download='novel.png';a.href=u;a.click();b.innerText=t;}); }
+    function saveImage(){ const e=document.getElementById("capture-area").firstElementChild, b=document.querySelector('.btn-save'), t=b.innerText; b.innerText="⏳...";
+    htmlToImage.toPng(e,{pixelRatio:2}).then(u=>{const a=document.createElement('a');a.download='novel.png';a.href=u;a.click();b.innerText=t;}); }
   </script>
 </body>
 </html>
