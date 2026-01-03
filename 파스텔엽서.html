@@ -1,0 +1,53 @@
+<div class="postcard-letter-theme">
+    <div class="theme-wrapper">
+        <div class="theme-page">
+
+            <!-- 좌측 프로필 영역 - 엽서 -->
+            <div class="theme-page__left">
+                <div class="vintage-postcard">
+                    <div class="postcard-stamp"></div>
+                    <div class="postmark"></div>
+                    <div class="address-label">
+                        {{#if {{equal::{{role}}::char}}}}{{user}}{{/if}}{{#if {{not_equal::{{role}}::char}}}}{{char}}{{/if}}
+                    </div>
+
+                    <div class="postcard-image-wrapper">
+                        <risuicon></risuicon>
+                    </div>
+
+                    <div class="postcard-name">
+                        {{#if {{equal::{{role}}::char}}}}{{char}}{{/if}}{{#if {{not_equal::{{role}}::char}}}}{{user}}{{/if}}
+                    </div>
+                    <div class="airmail-stripes"></div>
+                </div>
+
+                <!-- 메모 스티커 -->
+                <div class="profile-memo-sticker"></div>
+            </div>
+
+            <!-- 우측 텍스트 영역 - 편지지 -->
+            <div class="theme-page__right">
+                <div class="letter-paper">
+                    <div class="envelope-body"></div>
+                    <div class="envelope-triangle"></div>
+                    <div class="lined-background"></div>
+                    <!-- 본문 -->
+                    <div class="letter-content">
+                        <risutextbox></risutextbox>
+                    </div>
+
+                    <!-- 하단 푸터 - 메뉴 영역 -->
+                    <div class="letter-footer">
+                        <div class="plugin-area">
+                            <risugeninfo></risugeninfo>
+                        </div>
+                        <div class="buttons-area">
+                            <risubuttons></risubuttons>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
