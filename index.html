@@ -653,6 +653,27 @@
             </div>
         
             <hr class="parsed-hr" style="margin:10px 0;">
+
+          <hr class="parsed-hr" style="margin:10px 0;">
+
+            <div class="style-row">
+                <span>📟 문자 박스(백틱) 배경:</span>
+                <div class="mini-color-row">
+                    <div class="mini-preview" onclick="openPicker('sms_bg', '문자 박스 배경')">
+                        <div id="sms_bg-pv" class="mini-color-layer"></div>
+                    </div>
+                    <input type="text" id="sms_bg-txt" class="mini-input" onchange="setColor('sms_bg',this.value)">
+                </div>
+            </div>
+            <div class="style-row">
+                <span>📟 문자 박스(백틱) 글자:</span>
+                <div class="mini-color-row">
+                    <div class="mini-preview" onclick="openPicker('sms_tx', '문자 박스 글자')">
+                        <div id="sms_tx-pv" class="mini-color-layer"></div>
+                    </div>
+                    <input type="text" id="sms_tx-txt" class="mini-input" onchange="setColor('sms_tx',this.value)">
+                </div>
+            </div>
         
             <div class="style-row">
                 <span>🗨️ 말풍선(좌) 배경:</span>
@@ -744,7 +765,8 @@
       hlbg:'#e6ccb2', hltx:'#3e2723', 
       th:'#8d6e63', it:'#5d4037', bd:'#3e2723', qt:'#795548',
       bb_l_bg:'#fafafa', bb_l_tx:'#5d4037',
-      bb_r_bg:'#a1887f', bb_r_tx:'#ffffff'
+      bb_r_bg:'#a1887f', bb_r_tx:'#ffffff',
+      sms_bg:'#f1f5f9', sms_tx:'#334155'
     };
 
     // Preset Data Configuration
@@ -1283,7 +1305,7 @@ __ __: 글자 1단계 작게
 
         // 6. Construct CSS Variables
         // Note: --word-break defaults to 'break-all' based on HTML input value
-        const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px;`;
+        const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --sms-bg:${colors.sms_bg}; --sms-tx:${colors.sms_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px;`;
         
         // 7. Render Final HTML
         area.innerHTML = `<div class="card-frame" style="width:${width}px; padding:${pad}px; ${bgStyle} color:${colors.text}; font-family:${font}; font-weight:var(--base-weight, 400); ${cssVars}">` +
@@ -1652,6 +1674,7 @@ __ __: 글자 1단계 작게
             --hr-col: ${colors.hr};
             --bb-l-bg: ${colors.bb_l_bg}; --bb-l-tx: ${colors.bb_l_tx};
             --bb-r-bg: ${colors.bb_r_bg}; --bb-r-tx: ${colors.bb_r_tx};
+            --sms-bg: ${colors.sms_bg}; --sms-tx: ${colors.sms_tx};
             --base-sz: ${document.getElementById('fontSize').value}px;
             --base-lh: ${document.getElementById('lineHeight').value};
             --para-sp: ${document.getElementById('paraSpacing').value}px;
