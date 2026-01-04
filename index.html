@@ -769,31 +769,109 @@
       sms_bg:'#f1f5f9', sms_tx:'#334155'
     };
 
-    // Preset Data Configuration
+        // Preset Data Configuration
     let presets = [
       // 1. Basic & Natural
-      { name: '크림 라떼', bg1:'#fdfbf7', bg2:'#ede0d4', text:'#4a3b32', hr:'#d7ccc8', hlbg:'#ecd8c5', hltx:'#3e2723', th:'#8d6e63', it:'#5d4037', bd:'#3e2723', qt:'#795548', bb_l_bg:'#fafafa', bb_l_tx:'#5d4037', bb_r_bg:'#a1887f', bb_r_tx:'#ffffff' },
-      { name: '기본 화이트', bg1:'#ffffff', bg2:'#f8fafc', text:'#1e293b', hr:'#e2e8f0', hlbg:'#fef08a', hltx:'#000000', th:'#64748b', it:'#475569', bd:'#0f172a', qt:'#334155', bb_l_bg:'#f1f5f9', bb_l_tx:'#1e293b', bb_r_bg:'#3b82f6', bb_r_tx:'#ffffff' },
+      { 
+        name: '크림 라떼', 
+        bg1:'#fdfbf7', bg2:'#ede0d4', text:'#4a3b32', hr:'#d7ccc8', 
+        hlbg:'#ecd8c5', hltx:'#3e2723', th:'#8d6e63', it:'#5d4037', bd:'#3e2723', qt:'#795548', 
+        bb_l_bg:'#fafafa', bb_l_tx:'#5d4037', bb_r_bg:'#a1887f', bb_r_tx:'#ffffff',
+        sms_bg: '#f3ece4', sms_tx: '#5d4037' // 추가됨
+      },
+      { 
+        name: '기본 화이트', 
+        bg1:'#ffffff', bg2:'#f8fafc', text:'#1e293b', hr:'#e2e8f0', 
+        hlbg:'#fef08a', hltx:'#000000', th:'#64748b', it:'#475569', bd:'#0f172a', qt:'#334155', 
+        bb_l_bg:'#f1f5f9', bb_l_tx:'#1e293b', bb_r_bg:'#3b82f6', bb_r_tx:'#ffffff',
+        sms_bg: '#f1f5f9', sms_tx: '#334155' // 추가됨
+      },
       
       // 2. Emotion & Mood
-      { name: '새벽 감성', bg1:'#a18cd1', bg2:'#fbc2eb', text:'#4a2c58', hr:'#d8b4fe', hlbg:'#e0c3fc', hltx:'#2e1065', th:'#6b4c9a', it:'#5b3c8a', bd:'#2e1065', qt:'#8e44ad', bb_l_bg:'#f3e5f5', bb_l_tx:'#4a148c', bb_r_bg:'#9b59b6', bb_r_tx:'#ffffff' },
-      { name: '노을', bg1:'#fa709a', bg2:'#fee140', text:'#5e2c2c', hr:'#ffb7b2', hlbg:'#ffdac1', hltx:'#8a2be2', th:'#d35400', it:'#c0392b', bd:'#8e44ad', qt:'#e67e22', bb_l_bg:'#fff3e0', bb_l_tx:'#e65100', bb_r_bg:'#ff7043', bb_r_tx:'#ffffff' },
-      { name: '오래된 편지', bg1:'#fdfbf7', bg2:'#f6e6b4', text:'#5d4037', hr:'#d7ccc8', hlbg:'#fff9c4', hltx:'#3e2723', th:'#8d6e63', it:'#795548', bd:'#3e2723', qt:'#5d4037', bb_l_bg:'#fffdeb', bb_l_tx:'#5d4037', bb_r_bg:'#8d6e63', bb_r_tx:'#ffffff', font: "'KoPub World Batang', serif" },
+      { 
+        name: '새벽 감성', 
+        bg1:'#a18cd1', bg2:'#fbc2eb', text:'#4a2c58', hr:'#d8b4fe', 
+        hlbg:'#e0c3fc', hltx:'#2e1065', th:'#6b4c9a', it:'#5b3c8a', bd:'#2e1065', qt:'#8e44ad', 
+        bb_l_bg:'#f3e5f5', bb_l_tx:'#4a148c', bb_r_bg:'#9b59b6', bb_r_tx:'#ffffff',
+        sms_bg: '#f3e5f5', sms_tx: '#4a148c' // 추가됨
+      },
+      { 
+        name: '노을', 
+        bg1:'#fa709a', bg2:'#fee140', text:'#5e2c2c', hr:'#ffb7b2', 
+        hlbg:'#ffdac1', hltx:'#8a2be2', th:'#d35400', it:'#c0392b', bd:'#8e44ad', qt:'#e67e22', 
+        bb_l_bg:'#fff3e0', bb_l_tx:'#e65100', bb_r_bg:'#ff7043', bb_r_tx:'#ffffff',
+        sms_bg: '#fff8e1', sms_tx: '#e65100' // 추가됨
+      },
+      { 
+        name: '오래된 편지', 
+        bg1:'#fdfbf7', bg2:'#f6e6b4', text:'#5d4037', hr:'#d7ccc8', 
+        hlbg:'#fff9c4', hltx:'#3e2723', th:'#8d6e63', it:'#795548', bd:'#3e2723', qt:'#5d4037', 
+        bb_l_bg:'#fffdeb', bb_l_tx:'#5d4037', bb_r_bg:'#8d6e63', bb_r_tx:'#ffffff', font: "'KoPub World Batang', serif",
+        sms_bg: '#fff9c4', sms_tx: '#3e2723' // 추가됨
+      },
       
       // 3. Modern & Chic
-      { name: '어반 그레이', bg1:'#e0ece4', bg2:'#f3f4f6', text:'#2d3436', hr:'#b2bec3', hlbg:'#dfe6e9', hltx:'#000000', th:'#636e72', it:'#2d3436', bd:'#000000', qt:'#b2bec3', bb_l_bg:'#ffffff', bb_l_tx:'#2d3436', bb_r_bg:'#636e72', bb_r_tx:'#ffffff', font: "'Noto Sans KR', sans-serif" },
-      { name: '다크 모드', bg1:'#1a1a1a', bg2:'#2d3436', text:'#dfe6e9', hr:'#636e72', hlbg:'#2d3436', hltx:'#74b9ff', th:'#b2bec3', it:'#dfe6e9', bd:'#ffffff', qt:'#636e72', bb_l_bg:'#2d3436', bb_l_tx:'#dfe6e9', bb_r_bg:'#0984e3', bb_r_tx:'#ffffff' },
+      { 
+        name: '어반 그레이', 
+        bg1:'#e0ece4', bg2:'#f3f4f6', text:'#2d3436', hr:'#b2bec3', 
+        hlbg:'#dfe6e9', hltx:'#000000', th:'#636e72', it:'#2d3436', bd:'#000000', qt:'#b2bec3', 
+        bb_l_bg:'#ffffff', bb_l_tx:'#2d3436', bb_r_bg:'#636e72', bb_r_tx:'#ffffff', font: "'Noto Sans KR', sans-serif",
+        sms_bg: '#dfe6e9', sms_tx: '#2d3436' // 추가됨
+      },
+      { 
+        name: '다크 모드', 
+        bg1:'#1a1a1a', bg2:'#2d3436', text:'#dfe6e9', hr:'#636e72', 
+        hlbg:'#2d3436', hltx:'#74b9ff', th:'#b2bec3', it:'#dfe6e9', bd:'#ffffff', qt:'#636e72', 
+        bb_l_bg:'#2d3436', bb_l_tx:'#dfe6e9', bb_r_bg:'#0984e3', bb_r_tx:'#ffffff',
+        sms_bg: '#2d3436', sms_tx: '#dfe6e9' // 추가됨 (중요: 어두운 배경)
+      },
       
       // 4. Nature
-      { name: '숲속', bg1:'#d4fc79', bg2:'#96e6a1', text:'#1b5e20', hr:'#a5d6a7', hlbg:'#c8e6c9', hltx:'#1b5e20', th:'#2e7d32', it:'#388e3c', bd:'#1b5e20', qt:'#4caf50', bb_l_bg:'#e8f5e9', bb_l_tx:'#1b5e20', bb_r_bg:'#4caf50', bb_r_tx:'#ffffff' },
-      { name: '딥 오션', bg1:'#0f172a', bg2:'#1e3a8a', text:'#e2e8f0', hr:'#3b82f6', hlbg:'#1e40af', hltx:'#ffffff', th:'#94a3b8', it:'#cbd5e1', bd:'#ffffff', qt:'#60a5fa', bb_l_bg:'#1e293b', bb_l_tx:'#e2e8f0', bb_r_bg:'#2563eb', bb_r_tx:'#ffffff' },
+      { 
+        name: '숲속', 
+        bg1:'#d4fc79', bg2:'#96e6a1', text:'#1b5e20', hr:'#a5d6a7', 
+        hlbg:'#c8e6c9', hltx:'#1b5e20', th:'#2e7d32', it:'#388e3c', bd:'#1b5e20', qt:'#4caf50', 
+        bb_l_bg:'#e8f5e9', bb_l_tx:'#1b5e20', bb_r_bg:'#4caf50', bb_r_tx:'#ffffff',
+        sms_bg: '#e8f5e9', sms_tx: '#1b5e20' // 추가됨
+      },
+      { 
+        name: '딥 오션', 
+        bg1:'#0f172a', bg2:'#1e3a8a', text:'#e2e8f0', hr:'#3b82f6', 
+        hlbg:'#1e40af', hltx:'#ffffff', th:'#94a3b8', it:'#cbd5e1', bd:'#ffffff', qt:'#60a5fa', 
+        bb_l_bg:'#1e293b', bb_l_tx:'#e2e8f0', bb_r_bg:'#2563eb', bb_r_tx:'#ffffff',
+        sms_bg: '#1e293b', sms_tx: '#cbd5e1' // 추가됨
+      },
       
       // 5. Pastel
-      { name: '소다', bg1:'#f0f9ff', bg2:'#bae6fd', text:'#0c4a6e', hr:'#7dd3fc', hlbg:'#e0f2fe', hltx:'#0284c7', th:'#0369a1', it:'#075985', bd:'#0c4a6e', qt:'#38bdf8', bb_l_bg:'#f0f9ff', bb_l_tx:'#0c4a6e', bb_r_bg:'#0ea5e9', bb_r_tx:'#ffffff' },
-      { name: '라벤더', bg1:'#f3e8ff', bg2:'#e0e7ff', text:'#4c1d95', hr:'#d8b4fe', hlbg:'#ede9fe', hltx:'#5b21b6', th:'#7c3aed', it:'#6d28d9', bd:'#4c1d95', qt:'#a78bfa', bb_l_bg:'#f5f3ff', bb_l_tx:'#4c1d95', bb_r_bg:'#8b5cf6', bb_r_tx:'#ffffff' },
-      { name: '코지 블라썸', bg1:'#fff0f5', bg2:'#ffe4e9', text:'#5e2c38', hr:'#fbcfe8', hlbg:'#ffe4e6', hltx:'#881337', th:'#be123c', it:'#9f1239', bd:'#881337', qt:'#fb7185', bb_l_bg:'#fff1f2', bb_l_tx:'#881337', bb_r_bg:'#f43f5e', bb_r_tx:'#ffffff' }
+      { 
+        name: '소다', 
+        bg1:'#f0f9ff', bg2:'#bae6fd', text:'#0c4a6e', hr:'#7dd3fc', 
+        hlbg:'#e0f2fe', hltx:'#0284c7', th:'#0369a1', it:'#075985', bd:'#0c4a6e', qt:'#38bdf8', 
+        bb_l_bg:'#f0f9ff', bb_l_tx:'#0c4a6e', bb_r_bg:'#0ea5e9', bb_r_tx:'#ffffff',
+        sms_bg: '#e0f2fe', sms_tx: '#0c4a6e' // 추가됨
+      },
+      { 
+        name: '라벤더', 
+        bg1:'#f3e8ff', bg2:'#e0e7ff', text:'#4c1d95', hr:'#d8b4fe', 
+        hlbg:'#ede9fe', hltx:'#5b21b6', th:'#7c3aed', it:'#6d28d9', bd:'#4c1d95', qt:'#a78bfa', 
+        bb_l_bg:'#f5f3ff', bb_l_tx:'#4c1d95', bb_r_bg:'#8b5cf6', bb_r_tx:'#ffffff',
+        sms_bg: '#f5f3ff', sms_tx: '#5b21b6' // 추가됨
+      },
+      { 
+        name: '코지 블라썸', 
+        bg1:'#fff0f5', bg2:'#ffe4e9', text:'#5e2c38', hr:'#fbcfe8', 
+        hlbg:'#ffe4e6', hltx:'#881337', th:'#be123c', it:'#9f1239', bd:'#881337', qt:'#fb7185', 
+        bb_l_bg:'#fff1f2', bb_l_tx:'#881337', bb_r_bg:'#f43f5e', bb_r_tx:'#ffffff',
+        sms_bg: '#ffe4e6', sms_tx: '#881337' // 추가됨
+      }
     ];
 
+
+    
+      
+
+
+    
     // Runtime State
     let bgState = { mode:'gradient', imgData:null, sizeMode:'contain', overlayColor:'#000000', scale:100, posX:50, posY:50 };
     let insertTargetIndex = -1;
