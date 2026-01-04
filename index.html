@@ -1068,7 +1068,7 @@ __ __: 글자 1단계 작게
         if (type==='hr') { html += `<hr class="parsed-hr">`; return; }
 
         // 5. Inline Styling Parsing
-        s = s.replace(/`([^`]+)`/g, '<span class="sms-box">$1</span>'); // sms-box
+        s = s.replace(/`([^`]+)`/g, '__SMS_S__$1__SMS_E__'); // sms-box
         s = s.replace(/\*\*(.*?)\*\*/g, '__BD_S__$1__BD_E__'); // Bold
         s = s.replace(/\*(.*?)\*/g, '__IT_S__$1__IT_E__');     // Italic
         s = s.replace(/“(.*?)”/g, '__HL_S__$1__HL_E__');       // Smart Quote
@@ -1078,7 +1078,9 @@ __ __: 글자 1단계 작게
         s = s.replace(/__BD_S__/g, '<span class="parsed-bold">').replace(/__BD_E__/g, '</span>')
              .replace(/__IT_S__/g, '<span class="parsed-italic">').replace(/__IT_E__/g, '</span>')
              .replace(/__HL_S__/g, '<span class="highlight-text">“').replace(/__HL_E__/g, '”</span>')
-             .replace(/__TH_S__/g, '<span class="parsed-thought">\'').replace(/__TH_E__/g, '\'</span>');
+             .replace(/__TH_S__/g, '<span class="parsed-thought">\'').replace(/__TH_E__/g, '\'</span>')
+             .replace(/__SMS_S__/g, '<span class="sms-box">').replace(/__SMS_E__/g, '</span>');
+    
              
         // Restore HTML Tags
         s = s.replace(/__TAG_(\d+)__/g, (_, id) => tags[id]);
