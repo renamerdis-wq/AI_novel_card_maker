@@ -263,6 +263,20 @@
     .parsed-h3 { font-size: 1.1em; font-weight: 700; margin: 0 0 var(--para-sp, 1.2em); color: inherit; opacity: 0.9; line-height: inherit; }
     .parsed-hr { border: 0; height: 1px; background: var(--hr-col); margin: 1.5em 0; }
 
+        /* 문자 메시지 스타일 (백틱 ` 사용) */
+    .sms-box {
+        background-color: var(--sms-bg); 
+        color: var(--sms-tx);            
+        border: 1px solid rgba(0,0,0,0.1); /* 테두리는 연하게 고정 */
+        border-radius: 6px;
+        padding: 2px 8px;
+        font-family: 'Pretendard', sans-serif;
+        font-size: 0.92em;
+        display: inline-block;
+        margin: 0 2px;
+        vertical-align: middle;
+    }
+    
     #imgFileInput, #bgImgFileInput, #insertImgFileInput, #presetFileInput { display: none; }
     .editor-img-preview { max-width: 100px; max-height: 100px; border-radius: 6px; border: 1px solid #ddd; }
     
@@ -1032,6 +1046,7 @@ __ __: 글자 1단계 작게
         if (type==='hr') { html += `<hr class="parsed-hr">`; return; }
 
         // 5. Inline Styling Parsing
+        s = s.replace(/`([^`]+)`/g, '<span class="sms-box">$1</span>'); // sms-box
         s = s.replace(/\*\*(.*?)\*\*/g, '__BD_S__$1__BD_E__'); // Bold
         s = s.replace(/\*(.*?)\*/g, '__IT_S__$1__IT_E__');     // Italic
         s = s.replace(/“(.*?)”/g, '__HL_S__$1__HL_E__');       // Smart Quote
