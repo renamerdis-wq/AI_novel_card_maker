@@ -2618,39 +2618,57 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 
         /* --- Preset Handling --- */
         function applyPreset(p) {
-            colors = { ...colors, ...p };
-            const targetFont = p.font || "Pretendard, sans-serif";
+        colors = { ...colors, ...p }; 
+        
+        // [수정됨] 프리셋에 폰트가 지정되어 있을 때만 변경 (없으면 현재 폰트 유지)
+        if (p.font) {
+            const targetFont = p.font;
             document.getElementById('fontSelect').value = targetFont;
-
             const btns = document.querySelectorAll('.font-btn');
             btns.forEach(b => b.classList.remove('active'));
             let targetBtn = Array.from(btns).find(b => {
                 const clickAttr = b.getAttribute('onclick');
                 return clickAttr && clickAttr.includes(targetFont.replace(/'/g, "\\'"));
             });
-            if (!targetBtn && btns.length > 0) targetBtn = btns[0];
-            if (targetBtn) targetBtn.classList.add('active');
-            if (p.textAlign) { setAlign(p.textAlign, false); }
-
-            if (p.padding !== undefined) { document.getElementById('paddingRange').value = p.padding; updateVal('paddingRange', p.padding); }
-            if (p.gradAngle !== undefined) {
-                document.getElementById('gradAngle').value = p.gradAngle; updateVal('gradAngle', p.gradAngle);
-                const angleInput = document.getElementById('input-gradAngle'); if (angleInput) angleInput.value = p.gradAngle;
-            }
-            if (p.paraSpacing !== undefined) { document.getElementById('paraSpacing').value = p.paraSpacing; updateVal('paraSpacing', p.paraSpacing); }
-            if (p.width !== undefined) { document.getElementById('cardWidthInput').value = p.width; }
-            if (p.noItalic !== undefined) { document.getElementById('noItalic').checked = p.noItalic; }
-
-            if (p.bgState) {
-                bgState = { ...bgState, ...p.bgState };
-                updateVal('bgScale', bgState.scale); updateVal('bgPosX', bgState.posX); updateVal('bgPosY', bgState.posY);
-                document.getElementById('bgScale').value = bgState.scale; document.getElementById('bgPosX').value = bgState.posX; document.getElementById('bgPosY').value = bgState.posY;
-                if (bgState.mode === 'image') { document.getElementById('showImgOption').checked = true; toggleImgPanel(true, false); }
-                else { document.getElementById('showImgOption').checked = false; toggleImgPanel(false, false); }
-                setBgSize(bgState.sizeMode, false);
-            }
-            updateUI(); updatePreview(); saveData();
+            if(!targetBtn && btns.length > 0) targetBtn = btns[0];
+            if(targetBtn) targetBtn.classList.add('active');
         }
+
+        if(p.textAlign) { setAlign(p.textAlign, false); }
+
+        if(p.padding !== undefined) { document.getElementById('paddingRange').value = p.padding; updateVal('paddingRange', p.padding); }
+        if(p.gradAngle !== undefined) { 
+            document.getElementById('gradAngle').value = p.gradAngle; updateVal('gradAngle', p.gradAngle); 
+            const angleInput = document.getElementById('input-gradAngle'); if(angleInput) angleInput.value = p.gradAngle;
+        }
+        if(p.paraSpacing !== undefined) { document.getElementById('paraSpacing').value = p.paraSpacing; updateVal('paraSpacing', p.paraSpacing); }
+        if(p.width !== undefined) { document.getElementById('cardWidthInput').value = p.width; }
+        if(p.noItalic !== undefined) { document.getElementById('noItalic').checked = p.noItalic; }
+
+        // [새로 추가됨] 글자 크기, 굵기, 줄간격 적용 로직
+        if(p.fontSize !== undefined) { 
+            document.getElementById('fontSize').value = p.fontSize; 
+            updateVal('fontSize', p.fontSize); 
+        }
+        if(p.fontWeight !== undefined) { 
+            document.getElementById('fontWeight').value = p.fontWeight; 
+            updateVal('fontWeight', p.fontWeight); 
+        }
+        if(p.lineHeight !== undefined) { 
+            document.getElementById('lineHeight').value = p.lineHeight; 
+            updateVal('lineHeight', p.lineHeight); 
+        }
+
+        if(p.bgState) {
+            bgState = { ...bgState, ...p.bgState };
+            updateVal('bgScale', bgState.scale); updateVal('bgPosX', bgState.posX); updateVal('bgPosY', bgState.posY);
+            document.getElementById('bgScale').value = bgState.scale; document.getElementById('bgPosX').value = bgState.posX; document.getElementById('bgPosY').value = bgState.posY;
+            if(bgState.mode === 'image') { document.getElementById('showImgOption').checked = true; toggleImgPanel(true, false); } 
+            else { document.getElementById('showImgOption').checked = false; toggleImgPanel(false, false); }
+            setBgSize(bgState.sizeMode, false);
+        }
+        updateUI(); updatePreview(); saveData();
+    }
 
         function initPresets() {
             const c = document.getElementById('presetList'); c.innerHTML = '';
@@ -2669,25 +2687,42 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         }
 
         function saveCurrentToPreset() {
-            const name = prompt("현재 설정을 저장합니다. 이름을 입력하세요:", "나만의 프리셋");
-            if (name) {
-                const currentPadding = document.getElementById('paddingRange').value;
-                const currentFont = document.getElementById('fontSelect').value;
-                const currentAngle = document.getElementById('gradAngle').value;
-                const currentWidth = document.getElementById('cardWidthInput').value;
-                const currentNoItalic = document.getElementById('noItalic').checked;
-                const currentParaSpacing = document.getElementById('paraSpacing').value;
-                const currentAlign = document.getElementById('textAlignInput').value;
+        const name = prompt("현재 설정을 저장합니다. 이름을 입력하세요:", "나만의 프리셋");
+        if(name) {
+            // 기존에 없던 항목들(fontSize, fontWeight, lineHeight) 추가
+            const currentPadding = document.getElementById('paddingRange').value; 
+            const currentFont = document.getElementById('fontSelect').value; 
+            const currentAngle = document.getElementById('gradAngle').value;
+            const currentWidth = document.getElementById('cardWidthInput').value;
+            const currentNoItalic = document.getElementById('noItalic').checked;
+            const currentParaSpacing = document.getElementById('paraSpacing').value;
+            const currentAlign = document.getElementById('textAlignInput').value; 
+            
+            // 추가된 항목들
+            const currentFontSize = document.getElementById('fontSize').value;
+            const currentFontWeight = document.getElementById('fontWeight').value;
+            const currentLineHeight = document.getElementById('lineHeight').value;
 
-                const newPreset = {
-                    name: name, ...colors, padding: currentPadding, textAlign: currentAlign,
-                    font: currentFont, gradAngle: currentAngle, width: currentWidth,
-                    noItalic: currentNoItalic, paraSpacing: currentParaSpacing,
-                    bgState: { ...bgState }
-                };
-                presets.push(newPreset); initPresets(); saveData();
-            }
+            const newPreset = { 
+                name: name, 
+                ...colors, 
+                padding: currentPadding, 
+                textAlign: currentAlign, 
+                font: currentFont, 
+                gradAngle: currentAngle, 
+                width: currentWidth,
+                noItalic: currentNoItalic, 
+                paraSpacing: currentParaSpacing,
+                // 여기에 새로 추가
+                fontSize: currentFontSize,
+                fontWeight: currentFontWeight,
+                lineHeight: currentLineHeight,
+                
+                bgState: { ...bgState } 
+            };
+            presets.push(newPreset); initPresets(); saveData();
         }
+    }
 
         function setAlign(align, save = true) {
             document.getElementById('textAlignInput').value = align;
