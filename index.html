@@ -3476,14 +3476,61 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
             }
         }
 
+        /* --- Helper: 정확한 커서 높이 계산 (Mirror Div) --- */
+        function getCursorHeight(textarea, cursorPos) {
+            // 1. 가짜 div 생성
+            const div = document.createElement('div');
+            const styles = window.getComputedStyle(textarea);
+            
+            // 2. 텍스트박스의 스타일을 가짜 div에 완벽 복제
+            const copyProps = [
+                'boxSizing', 'width', 'paddingTop', 'paddingBottom', 
+                'paddingLeft', 'paddingRight', 'borderWidth', 
+                'fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 
+                'letterSpacing', 'whiteSpace', 'wordBreak', 'wordWrap'
+            ];
+            
+            copyProps.forEach(prop => {
+                div.style[prop] = styles[prop];
+            });
+
+            // 3. 화면에 안 보이게 처리하되, 계산을 위해 DOM에는 붙임
+            div.style.position = 'absolute';
+            div.style.visibility = 'hidden';
+            div.style.top = '-9999px';
+            div.style.left = '-9999px';
+            div.style.height = 'auto';
+            div.style.overflow = 'hidden';
+
+            // 4. 커서 위치까지의 텍스트를 넣음 (특수문자 처리)
+            const textContent = textarea.value.substring(0, cursorPos);
+            div.textContent = textContent;
+            
+            // 줄바꿈이 일어나는 높이를 계산하기 위해 더미 스팬 추가
+            const span = document.createElement('span');
+            span.textContent = '|'; // 커서 높이를 잴 기준점
+            div.appendChild(span);
+
+            document.body.appendChild(div);
+            
+            // 5. 스팬의 높이 좌표(offsetTop)를 가져옴 -> 이것이 정확한 커서의 Y좌표
+            // div의 padding-top을 고려하여 보정
+            const paddingTop = parseInt(styles.paddingTop);
+            const relativeTop = span.offsetTop - paddingTop; 
+            
+            // 사용 후 삭제
+            document.body.removeChild(div);
+            
+            return span.offsetTop; 
+        }
+        
         /* =========================================
-           [New Feature] Preview Click to Edit (Auto Scroll Fixed)
+           [New Feature] Preview Click to Edit (Mirror Div Ver.)
            ========================================= */
         function setupPreviewClick() {
             const captureArea = document.getElementById('capture-area');
             
             captureArea.addEventListener('click', function(e) {
-                // 1. 클릭된 요소 식별
                 const wrapper = e.target.closest('.preview-block-item');
                 if (!wrapper) return; 
 
@@ -3491,47 +3538,39 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
                 const textarea = document.getElementById(`editor-${index}`);
                 
                 if (textarea) {
-                    // 2. 에디터 패널이 닫혀있다면 열기
+                    // 에디터 패널 열기
                     const editorArea = document.getElementById('editorArea');
                     if (editorArea.classList.contains('collapsed')) {
                         toggleEditor();
                     }
 
-                    // 3. 클릭한 텍스트 내용 가져오기
                     let clickedText = e.target.innerText.trim();
                     if (!clickedText) return;
 
-                    // 4. 원본 텍스트에서 위치 찾기
                     const rawContent = textarea.value;
                     const pos = rawContent.indexOf(clickedText);
-
-                    // 5. 페이지 스크롤 이동 (에디터가 보이게)
+                    
+                    // 1. 텍스트박스 자체를 화면에 보이게 이동
                     textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
-                    // 6. 커서 이동 및 **내부 스크롤 조정**
                     setTimeout(() => {
                         textarea.focus();
                         if (pos !== -1) {
-                            // (1) 커서 위치 잡기
+                            // 2. 커서 선택
                             textarea.setSelectionRange(pos, pos + clickedText.length);
 
-                            // (2) 줄 번호 계산 (커서 앞까지의 줄바꿈 개수 세기)
-                            const textUpToCursor = rawContent.substring(0, pos);
-                            const numberOfLines = textUpToCursor.split('\n').length;
-
-                            // (3) 한 줄의 높이(px) 계산
-                            const computedStyle = window.getComputedStyle(textarea);
-                            let lineHeight = parseInt(computedStyle.lineHeight);
-                            // 만약 line-height가 'normal' 등으로 나와서 계산 안되면 기본값(대략 21px) 사용
-                            if (isNaN(lineHeight)) lineHeight = 21; 
-
-                            // (4) 스크롤 위치 계산: (현재 줄 * 줄높이) - (화면 중앙 보정)
-                            const scrollToY = (numberOfLines * lineHeight) - (textarea.clientHeight / 2);
-
-                            // (5) 스크롤 적용
-                            textarea.scrollTop = scrollToY;
+                            // 3. [핵심] 정확한 픽셀 높이 계산하여 내부 스크롤 이동
+                            const cursorY = getCursorHeight(textarea, pos);
+                            
+                            // 텍스트박스 높이의 절반만큼 빼줘서 커서가 중앙에 오게 함
+                            const centerOffset = textarea.clientHeight / 2;
+                            
+                            textarea.scrollTo({
+                                top: cursorY - centerOffset,
+                                behavior: 'smooth'
+                            });
                         }
-                    }, 300); 
+                    }, 350); 
                 }
             });
         }
