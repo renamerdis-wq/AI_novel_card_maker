@@ -924,6 +924,7 @@
         <button class="btn-regex-preset" onclick="addRegexRule('says nothing')">🙊 '*says nothing*' 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('annotation')">✏️ 주석 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('details')">📂 Details 태그 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('details')">📂 Details 태그 제거</button>
     </div>
     
     <div id="regexListContainer">
@@ -2137,9 +2138,10 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         document.getElementById('pickerOverlay').style.display = 'none';
     }
 
-    // 2. 규칙 추가 (프리셋 or 빈칸)
+// 2. 규칙 추가 (m 플래그 기본값 설정)
     function addRegexRule(type) {
-        let newRule = { pattern: '', replace: '', ignoreCase: false };
+        // multiline: true를 기본으로 추가 (빈 줄 삭제 등에 필수)
+        let newRule = { pattern: '', replace: '', ignoreCase: false, multiline: true };
 
         if (type === 'lightboard') {
             newRule.pattern = '<!-- Platform managed do not generate -->[\\s\\S]*?<!-- End platform managed -->';
@@ -2155,14 +2157,16 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
             newRule.pattern = '\\*says nothing\\*';
         } else if (type === 'annotation') {
             newRule.pattern = '<!--[\\s\\S]*?-->';
+        } else if (type === 'empty') {
+            newRule.pattern = '^\\s*[\\r\\n]';
         }
 
         regexQueue.push(newRule);
         renderRegexList();
-        
-        // 스크롤을 맨 아래로
-        const container = document.getElementById('regexListContainer');
-        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
+        setTimeout(() => {
+            const container = document.getElementById('regexListContainer');
+            if(container) container.scrollTop = container.scrollHeight;
+        }, 50);
     }
 
     // 3. 규칙 삭제
@@ -2171,13 +2175,13 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         renderRegexList();
     }
 
-    // 4. 입력값 동기화 (HTML 입력 -> 변수 저장)
+// 4. 입력값 동기화 (multiline 처리 추가)
     function updateRegexRule(idx, field, value) {
-        if(field === 'ignoreCase') regexQueue[idx][field] = value; // checkbox
-        else regexQueue[idx][field] = value; // text
+        // 체크박스(boolean)와 텍스트(string) 모두 처리
+        regexQueue[idx][field] = value;
     }
 
-    // 5. 화면 그리기 (렌더링)
+    // 5. 화면 그리기 (렌더링) - Multiline 옵션 추가됨
     function renderRegexList() {
         const container = document.getElementById('regexListContainer');
         container.innerHTML = '';
@@ -2189,15 +2193,21 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
                 <div class="regex-row-header">
                     <span>RULE #${idx + 1}</span>
                     <div style="display:flex; gap:8px; align-items:center;">
-                        <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
-                            <input type="checkbox" ${rule.ignoreCase ? 'checked' : ''} onchange="updateRegexRule(${idx}, 'ignoreCase', this.checked)"> 
-                            <span style="font-size:10px;">대소문자무시(i)</span>
-                        </label>
+                        <div style="display:flex; gap:6px;">
+                            <label style="display:flex; align-items:center; gap:3px; cursor:pointer;" title="대소문자 구분 안 함">
+                                <input type="checkbox" ${rule.ignoreCase ? 'checked' : ''} onchange="updateRegexRule(${idx}, 'ignoreCase', this.checked)"> 
+                                <span style="font-size:10px;">i (대소문자)</span>
+                            </label>
+                            <label style="display:flex; align-items:center; gap:3px; cursor:pointer;" title="여러 줄 모드 (^, $ 사용 가능)">
+                                <input type="checkbox" ${rule.multiline ? 'checked' : ''} onchange="updateRegexRule(${idx}, 'multiline', this.checked)"> 
+                                <span style="font-size:10px; font-weight:bold; color:#2563eb;">m (다중행)</span>
+                            </label>
+                        </div>
                         <button class="btn-del-row" onclick="removeRegexRule(${idx})" title="삭제">🗑️</button>
                     </div>
                 </div>
                 <div class="regex-inputs-row">
-                    <input type="text" class="regex-mini-input" placeholder="찾을 패턴" value="${rule.pattern.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'pattern', this.value)">
+                    <input type="text" class="regex-mini-input" placeholder="찾을 패턴 (예: ^\\s*[\\r\\n])" value="${rule.pattern.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'pattern', this.value)">
                 </div>
                 <div class="regex-inputs-row">
                     <input type="text" class="regex-mini-input" placeholder="바꿀 내용 (비우면 삭제)" value="${rule.replace.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'replace', this.value)">
@@ -2207,11 +2217,9 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         });
     }
 
-    // 6. 실행 로직 (핵심)
+    // 6. 실행 로직 (플래그 조합 수정)
     function executeRegexQueue(isAll) {
         if (regexQueue.length === 0) { alert("적용할 규칙이 없습니다."); return; }
-        
-        // 유효성 검사 (패턴이 비어있는 건 제외)
         const validRules = regexQueue.filter(r => r.pattern.trim() !== '');
         if (validRules.length === 0) { alert("입력된 패턴이 없습니다."); return; }
 
@@ -2219,24 +2227,19 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
 
         try {
             let changedCount = 0;
-            
-            // 적용 대상 설정 (전체 vs 하나)
-            const targetIndices = isAll 
-                ? blocks.map((_, i) => i) // 전체 인덱스 배열
-                : (currentRegexTarget !== -1 ? [currentRegexTarget] : []);
+            const targetIndices = isAll ? blocks.map((_, i) => i) : (currentRegexTarget !== -1 ? [currentRegexTarget] : []);
 
             if (targetIndices.length === 0) return;
 
-            // 각 블록마다 규칙들을 순서대로 적용
             targetIndices.forEach(blockIdx => {
                 if (blocks[blockIdx].type !== 'text') return;
 
                 let content = blocks[blockIdx].content;
                 let original = content;
 
-                // 큐에 있는 모든 정규식을 순차 실행 (Chaining)
                 validRules.forEach(rule => {
-                    const flags = 'g' + (rule.ignoreCase ? 'i' : '');
+                    // ✅ 여기서 m 플래그를 추가합니다!
+                    const flags = 'g' + (rule.ignoreCase ? 'i' : '') + (rule.multiline ? 'm' : '');
                     const regex = new RegExp(rule.pattern, flags);
                     content = content.replace(regex, rule.replace);
                 });
@@ -2244,22 +2247,14 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
                 if (content !== original) {
                     blocks[blockIdx].content = content;
                     changedCount++;
-                    // 에디터 갱신
                     const editor = document.getElementById(`editor-${blockIdx}`);
                     if(editor) editor.value = content;
                 }
             });
 
             if (changedCount > 0) {
-                renderBlocks();
-                updatePreview();
-                saveData();
-                
-                // ✅ 중요: 실행 완료 후에만 큐를 비웁니다 (성공 시)
-                regexQueue = []; 
-                renderRegexList();
-                closeRegexModal();
-                
+                renderBlocks(); updatePreview(); saveData();
+                regexQueue = []; renderRegexList(); closeRegexModal();
                 alert(`완료! ${changedCount}개의 블록이 수정되었습니다.`);
             } else {
                 alert("해당 패턴을 찾지 못해 변경된 내용이 없습니다.");
