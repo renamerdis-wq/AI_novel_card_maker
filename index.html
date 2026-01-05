@@ -358,26 +358,16 @@
     }
 
    /* =========================================
-   Regex Modal Styles (Final Fixed)
+   Regex Modal Styles (Multi-Row Support)
    ========================================= */
 #regexModal {
-    display: none; 
-    flex-direction: column; 
-    gap: 16px;
-    
-    position: fixed; 
-    top: 50%; left: 50%; 
-    transform: translate(-50%, -50%);
-    z-index: 3000; /* 오버레이(2999)보다 높아야 함 */
-    
-    width: 340px;
-    padding: 24px;
-    
-    background: #ffffff; /* 투명도 없이 완전 흰색 */
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); /* 그림자 진하게 */
-    
+    display: none; flex-direction: column; gap: 12px;
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 3000;
+    width: 400px; max-height: 80vh; /* 길어지면 스크롤 */
+    padding: 20px;
+    background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -386,66 +376,46 @@
     to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
-.regex-header {
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 12px; margin-bottom: 4px;
-}
+.regex-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
 .regex-title { font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px; }
-.regex-close-btn {
-    border: none; background: #f1f5f9; color: #64748b;
-    width: 28px; height: 28px; border-radius: 50%;
-    cursor: pointer; display: flex; justify-content: center; align-items: center;
-    font-size: 14px; transition: all 0.2s;
-}
-.regex-close-btn:hover { background: #e2e8f0; color: #ef4444; transform: rotate(90deg); }
+.regex-close-btn { border: none; background: #f1f5f9; color: #64748b; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px; }
+.regex-close-btn:hover { background: #e2e8f0; color: #ef4444; }
 
-.regex-group { display: flex; flex-direction: column; gap: 6px; }
-.regex-label { font-size: 12px; font-weight: 700; color: #475569; margin-left: 2px; }
-.regex-desc { font-size: 11px; color: #94a3b8; margin-top: -2px; display: flex; align-items: center; gap: 4px;}
+/* 프리셋 버튼 */
+.regex-preset-box { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+.btn-regex-preset { font-size: 11px; font-weight: 600; padding: 6px 10px; background: white; border: 1px solid #cbd5e1; border-radius: 16px; color: #475569; cursor: pointer; transition: all 0.2s; display:flex; align-items:center; gap:4px; }
+.btn-regex-preset:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
 
-.regex-input {
-    width: 100%; padding: 12px;
-    border: 1px solid #cbd5e1; border-radius: 12px;
-    background: #f8fafc;
-    font-family: 'Pretendard', monospace; font-size: 14px; color: #334155;
-    outline: none; transition: all 0.2s ease;
+/* 규칙 리스트 영역 (스크롤 가능) */
+#regexListContainer {
+    display: flex; flex-direction: column; gap: 8px;
+    overflow-y: auto; flex: 1; min-height: 100px; padding-right: 4px;
 }
-.regex-input:focus {
-    background: #ffffff; border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.regex-row-item {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px;
+    position: relative; animation: fadeIn 0.2s ease-out;
 }
+.regex-row-header { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b; font-weight: 700; }
+.regex-inputs-row { display: flex; gap: 6px; align-items: center; }
+.regex-mini-input {
+    flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px;
+    font-family: monospace; font-size: 13px; outline: none; width: 100%;
+}
+.regex-mini-input:focus { border-color: #3b82f6; background: #fff; }
+.btn-del-row { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 12px; }
 
-.regex-opt-row {
-    display: flex; align-items: center; gap: 8px;
-    background: #f0f9ff; padding: 10px 12px; border-radius: 10px;
-    border: 1px solid #bae6fd; color: #0369a1; font-size: 12px; font-weight: 600;
-    margin-top: 5px;
+.btn-add-rule {
+    width: 100%; padding: 8px; background: white; border: 2px dashed #cbd5e1; border-radius: 8px;
+    color: #64748b; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.2s;
 }
-.regex-chk { accent-color: #0284c7; cursor: pointer; width: 16px; height: 16px; }
+.btn-add-rule:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
 
-    /* 프리셋 버튼 영역 스타일 */
-.regex-preset-box {
-    display: flex; flex-wrap: wrap; gap: 6px;
-    margin-bottom: 5px;
-    padding: 8px;
-    background: #f1f5f9; border-radius: 8px;
-    border: 1px solid #e2e8f0;
-}
-
-.btn-regex-preset {
-    font-size: 11px; font-weight: 600;
-    padding: 6px 10px;
-    background: white; border: 1px solid #cbd5e1;
-    border-radius: 20px; color: #475569; cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; gap: 4px;
-}
-
-.btn-regex-preset:hover {
-    border-color: #3b82f6; color: #3b82f6; background: #eff6ff;
-    transform: translateY(-1px);
-}
+/* 하단 실행 버튼 */
+.regex-btn-row { display: flex; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
+.btn-regex-run { flex: 1; padding: 12px; border: none; border-radius: 12px; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; font-weight: 700; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+.btn-regex-all { flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; background: #ffffff; color: #475569; font-weight: 700; font-size: 13px; cursor: pointer; }
+.btn-regex-all:hover { background: #f1f5f9; color: #0f172a; }
 
     
 /* 버튼 그룹 */
@@ -908,39 +878,27 @@
 <div id="regexModal">
     <div class="regex-header">
         <div class="regex-title">
-            <span style="font-size:18px;">🔡</span> 정규식 치환
+            <span style="font-size:18px;">🔡</span> 멀티 정규식 치환
         </div>
         <button class="regex-close-btn" onclick="closeRegexModal()">✕</button>
     </div>
     
-    <div class="regex-group">
-        <label class="regex-label">⚡ 빠른 삭제 프리셋 (클릭 시 자동 입력)</label>
-        <div class="regex-preset-box">
-            <button class="btn-regex-preset" onclick="fillRegexPreset('lightboard')">🤖 라이트보드 삭제</button>
-            <button class="btn-regex-preset" onclick="fillRegexPreset('wncs')">⚙️ WNCS 설정 삭제</button>
-            <button class="btn-regex-preset" onclick="fillRegexPreset('response')">📝 '# 응답' 제목 삭제</button>
+    <div style="font-size:12px; font-weight:700; color:#475569; margin-bottom:4px;">⚡ 빠른 추가 (클릭 시 리스트에 추가됨)</div>
+    <div class="regex-preset-box">
+        <button class="btn-regex-preset" onclick="addRegexRule('lightboard')">🤖 라이트보드 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('wncs')">⚙️ WNCS 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('response')">📝 '# 응답' 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('details')">📂 Details 태그 제거</button>
+    </div>
+    
+    <div id="regexListContainer">
         </div>
-    </div>
-    
-    <div class="regex-group">
-        <label class="regex-label">찾을 내용 (Regex Pattern)</label>
-        <input type="text" id="regexPattern" class="regex-input" placeholder="패턴을 입력하거나 위 버튼을 누르세요">
-        <div class="regex-desc">💡 <span style="text-decoration: underline;">JS 정규식 문법</span>을 지원합니다.</div>
-    </div>
-    
-    <div class="regex-group">
-        <label class="regex-label">바꿀 내용 (Replacement)</label>
-        <input type="text" id="regexReplacement" class="regex-input" placeholder="바꿀 텍스트 (비워두면 삭제)">
-    </div>
-    
-    <label class="regex-opt-row">
-        <input type="checkbox" id="regexFlagI" class="regex-chk"> 
-        <span>대소문자 구분 안 함 (Ignore Case)</span>
-    </label>
+
+    <button class="btn-add-rule" onclick="addRegexRule('empty')">➕ 새 규칙 직접 추가하기</button>
 
     <div class="regex-btn-row">
-        <button id="btnRegexOne" class="btn-regex-all" onclick="applyRegex()">👇 이 블록만</button>
-        <button class="btn-regex-run" onclick="applyRegexAll()">🌍 전체 치환</button>
+        <button id="btnRegexOne" class="btn-regex-all" onclick="executeRegexQueue(false)">👇 이 블록만 적용</button>
+        <button class="btn-regex-run" onclick="executeRegexQueue(true)">🌍 전체 일괄 적용</button>
     </div>
 </div>
   
@@ -2108,135 +2066,166 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         if(save) saveData();
     }
 
-    /* =========================================
-       Regex Feature Logic
+/* =========================================
+       Multi-Regex Logic (Advanced)
        ========================================= */
+    
+    // 정규식 규칙들을 저장할 배열 (모달을 닫아도 유지됨)
+    let regexQueue = []; 
     let currentRegexTarget = -1;
 
-function openRegexModal(index) {
+    // 1. 모달 열기
+    function openRegexModal(index) {
         currentRegexTarget = index;
-        document.getElementById('regexPattern').value = '';
-        document.getElementById('regexReplacement').value = '';
         document.getElementById('regexModal').style.display = 'flex';
-        document.getElementById('pickerOverlay').style.display = 'block'; 
-        document.getElementById('regexPattern').focus();
+        document.getElementById('pickerOverlay').style.display = 'block';
+        
+        // 큐가 비어있으면 기본으로 빈 규칙 하나 추가
+        if (regexQueue.length === 0) {
+            addRegexRule('empty');
+        } else {
+            renderRegexList(); // 기존 규칙 보여주기
+        }
 
-        // 전체 모드(-1)로 열었으면 '이 블록만' 버튼 숨기기
         const oneBtn = document.getElementById('btnRegexOne');
         if (index === -1) {
-            oneBtn.style.display = 'none';
+            oneBtn.style.display = 'none'; // 전체 모드면 개별 버튼 숨김
         } else {
             oneBtn.style.display = 'block';
-            oneBtn.innerText = `블록 #${index + 1}만 적용`;
+            oneBtn.innerText = `👇 이 블록(#${index + 1})만 적용`;
         }
     }
-    
+
     function closeRegexModal() {
         document.getElementById('regexModal').style.display = 'none';
         document.getElementById('pickerOverlay').style.display = 'none';
     }
 
-    function applyRegex() {
-        if (currentRegexTarget === -1) return;
-        
-        const patternStr = document.getElementById('regexPattern').value;
-        const replaceStr = document.getElementById('regexReplacement').value;
-        const ignoreCase = document.getElementById('regexFlagI').checked;
-
-        if (!patternStr) {
-            alert("찾을 패턴을 입력해주세요.");
-            return;
-        }
-
-        try {
-            // g(전체 치환) 플래그는 기본 적용, i(대소문자 무시)는 옵션
-            const flags = 'g' + (ignoreCase ? 'i' : '');
-            const regex = new RegExp(patternStr, flags);
-            
-            const oldContent = blocks[currentRegexTarget].content;
-            const newContent = oldContent.replace(regex, replaceStr);
-
-            // 변경사항 적용
-            blocks[currentRegexTarget].content = newContent;
-            
-            // 에디터 및 프리뷰 업데이트
-            const editorEl = document.getElementById(`editor-${currentRegexTarget}`);
-            if(editorEl) editorEl.value = newContent;
-            
-            updateTextContent(currentRegexTarget, newContent);
-            closeRegexModal();
-            
-        } catch (e) {
-            alert("잘못된 정규식 패턴입니다.\n" + e.message);
-        }
-    }
-
-    /* 프리셋 자동 입력 함수 (수정됨) */
-    function fillRegexPreset(type) {
-        let pattern = '';
-        const replacement = ''; // 삭제니까 비워둠
+    // 2. 규칙 추가 (프리셋 or 빈칸)
+    function addRegexRule(type) {
+        let newRule = { pattern: '', replace: '', ignoreCase: false };
 
         if (type === 'lightboard') {
-            pattern = '<!-- Platform managed do not generate -->[\\s\\S]*?<!-- End platform managed -->';
+            newRule.pattern = '[\\s\\S]*?';
         } else if (type === 'wncs') {
-            // WNCS 설정 삭제 (중괄호 이스케이프 주의)
-            pattern = 'WNCS\\{[\\s\\S]*?\\}';
+            newRule.pattern = 'WNCS\\{[\\s\\S]*?\\}';
         } else if (type === 'response') {
-            // '# 응답' 제목 삭제
-            pattern = '# 응답';
+            newRule.pattern = '# 응답';
+        } else if (type === 'details') {
+            // ✅ 요청하신 Details 태그 삭제 패턴
+            newRule.pattern = '<details>[\\s\\S]*?<\\/details>';
         }
 
-        // 입력창에 값 채우기
-        document.getElementById('regexPattern').value = pattern;
-        document.getElementById('regexReplacement').value = replacement;
+        regexQueue.push(newRule);
+        renderRegexList();
         
-        // 시각적 피드백 (깜빡임 효과)
-        const input = document.getElementById('regexPattern');
-        input.style.backgroundColor = '#e0f2fe';
-        setTimeout(() => { input.style.backgroundColor = '#f8fafc'; }, 200);
+        // 스크롤을 맨 아래로
+        const container = document.getElementById('regexListContainer');
+        setTimeout(() => container.scrollTop = container.scrollHeight, 50);
     }
 
-    function applyRegexAll() {
-        const patternStr = document.getElementById('regexPattern').value;
-        const replaceStr = document.getElementById('regexReplacement').value;
-        const ignoreCase = document.getElementById('regexFlagI').checked;
+    // 3. 규칙 삭제
+    function removeRegexRule(idx) {
+        regexQueue.splice(idx, 1);
+        renderRegexList();
+    }
 
-        if (!patternStr) { alert("찾을 패턴을 입력해주세요."); return; }
-        if (!confirm("모든 텍스트 블록에 대해 치환을 수행하시겠습니까?\n(되돌릴 수 없습니다)")) return;
+    // 4. 입력값 동기화 (HTML 입력 -> 변수 저장)
+    function updateRegexRule(idx, field, value) {
+        if(field === 'ignoreCase') regexQueue[idx][field] = value; // checkbox
+        else regexQueue[idx][field] = value; // text
+    }
+
+    // 5. 화면 그리기 (렌더링)
+    function renderRegexList() {
+        const container = document.getElementById('regexListContainer');
+        container.innerHTML = '';
+
+        regexQueue.forEach((rule, idx) => {
+            const div = document.createElement('div');
+            div.className = 'regex-row-item';
+            div.innerHTML = `
+                <div class="regex-row-header">
+                    <span>RULE #${idx + 1}</span>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <label style="display:flex; align-items:center; gap:3px; cursor:pointer;">
+                            <input type="checkbox" ${rule.ignoreCase ? 'checked' : ''} onchange="updateRegexRule(${idx}, 'ignoreCase', this.checked)"> 
+                            <span style="font-size:10px;">대소문자무시(i)</span>
+                        </label>
+                        <button class="btn-del-row" onclick="removeRegexRule(${idx})" title="삭제">🗑️</button>
+                    </div>
+                </div>
+                <div class="regex-inputs-row">
+                    <input type="text" class="regex-mini-input" placeholder="찾을 패턴" value="${rule.pattern.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'pattern', this.value)">
+                </div>
+                <div class="regex-inputs-row">
+                    <input type="text" class="regex-mini-input" placeholder="바꿀 내용 (비우면 삭제)" value="${rule.replace.replace(/"/g, '&quot;')}" oninput="updateRegexRule(${idx}, 'replace', this.value)">
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    // 6. 실행 로직 (핵심)
+    function executeRegexQueue(isAll) {
+        if (regexQueue.length === 0) { alert("적용할 규칙이 없습니다."); return; }
+        
+        // 유효성 검사 (패턴이 비어있는 건 제외)
+        const validRules = regexQueue.filter(r => r.pattern.trim() !== '');
+        if (validRules.length === 0) { alert("입력된 패턴이 없습니다."); return; }
+
+        if (isAll && !confirm(`총 ${validRules.length}개의 규칙을 '모든 블록'에 순차적으로 적용하시겠습니까?\n(되돌릴 수 없습니다)`)) return;
 
         try {
-            const flags = 'g' + (ignoreCase ? 'i' : '');
-            const regex = new RegExp(patternStr, flags);
-            let count = 0;
-            let changedBlocks = 0;
+            let changedCount = 0;
+            
+            // 적용 대상 설정 (전체 vs 하나)
+            const targetIndices = isAll 
+                ? blocks.map((_, i) => i) // 전체 인덱스 배열
+                : (currentRegexTarget !== -1 ? [currentRegexTarget] : []);
 
-            blocks.forEach((b, i) => {
-                if(b.type === 'text') {
-                    const oldContent = b.content;
-                    const newContent = oldContent.replace(regex, replaceStr);
-                    
-                    if(oldContent !== newContent) {
-                        blocks[i].content = newContent;
-                        changedBlocks++;
-                        // 현재 열려있는 에디터가 있다면 갱신
-                        const editorEl = document.getElementById(`editor-${i}`);
-                        if(editorEl) editorEl.value = newContent;
-                    }
+            if (targetIndices.length === 0) return;
+
+            // 각 블록마다 규칙들을 순서대로 적용
+            targetIndices.forEach(blockIdx => {
+                if (blocks[blockIdx].type !== 'text') return;
+
+                let content = blocks[blockIdx].content;
+                let original = content;
+
+                // 큐에 있는 모든 정규식을 순차 실행 (Chaining)
+                validRules.forEach(rule => {
+                    const flags = 'g' + (rule.ignoreCase ? 'i' : '');
+                    const regex = new RegExp(rule.pattern, flags);
+                    content = content.replace(regex, rule.replace);
+                });
+
+                if (content !== original) {
+                    blocks[blockIdx].content = content;
+                    changedCount++;
+                    // 에디터 갱신
+                    const editor = document.getElementById(`editor-${blockIdx}`);
+                    if(editor) editor.value = content;
                 }
             });
 
-            if(changedBlocks > 0) {
-                renderBlocks(); // 전체 블록 다시 그리기 (내용 갱신)
+            if (changedCount > 0) {
+                renderBlocks();
                 updatePreview();
                 saveData();
+                
+                // ✅ 중요: 실행 완료 후에만 큐를 비웁니다 (성공 시)
+                regexQueue = []; 
+                renderRegexList();
                 closeRegexModal();
-                alert(`총 ${changedBlocks}개의 블록에서 내용이 변경되었습니다.`);
+                
+                alert(`완료! ${changedCount}개의 블록이 수정되었습니다.`);
             } else {
-                alert("해당 패턴을 찾지 못했습니다.");
+                alert("해당 패턴을 찾지 못해 변경된 내용이 없습니다.");
             }
-            
+
         } catch (e) {
-            alert("오류 발생: " + e.message);
+            alert("정규식 오류 발생: " + e.message);
         }
     }
     
