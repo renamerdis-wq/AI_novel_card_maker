@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그 카드 생성기 v1.4.2</title>
+    <title>로그 카드 생성기 v1.5.1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 
@@ -1367,7 +1367,7 @@
         </div>
 
         <div class="editor-header-bar" onclick="toggleEditor()">
-            <div class="editor-title">로그 카드 생성기 v1.4.2</div>
+            <div class="editor-title">로그 카드 생성기 v1.5.1</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
@@ -1827,7 +1827,7 @@
             </div>
 
             <div style="text-align: center; padding: 30px 0; color: #94a3b8; font-size: 12px; font-weight: 600;">
-                © RenaMerdis v1.4.2
+                © RenaMerdis v1.5.1
                 <br><br> <a href="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM/"><img alt="Hits"
                         src="https://hits.sh/renamerdis-wq.github.io/Log-card-maker-RM.svg?label=%F0%9F%AB%B6%F0%9F%8F%BB&color=9f9f9f" /></a>
             </div>
@@ -1883,7 +1883,7 @@
         <div id="regexListContainer">
         </div>
 
-        <button class="btn-add-rule" onclick="addRegexRule('empty')">➕ 새 규칙 직접 추가하기</button>
+        <button class="btn-add-rule" onclick="addRegexRule('custom')">➕ 새 규칙 직접 추가하기</button>
 
         <div class="regex-btn-row">
             <button id="btnRegexOne" class="btn-regex-all" onclick="executeRegexQueue(false)">👇 이 블록만 적용</button>
@@ -1895,7 +1895,7 @@
         /* =========================================
            1. Data & State Management
            ========================================= */
-        const STORAGE_KEY = 'LogCardv1_4_2_data'; // Updated for v1.4.2 compatibility
+        const STORAGE_KEY = 'LogCardv1_5_1_data'; // Updated for v1.5.1 compatibility
 
         // Default Color Palette
         let colors = {
@@ -2017,10 +2017,10 @@
         let currentZoom = 100;
         let debounceTimer = null;
 
-        // Default Block Content (v1.4.2)
+        // Default Block Content (v1.5.1)
         let blocks = [{
             type: 'text', content: `
-# 로그 카드 생성기 v1.4.2
+# 로그 카드 생성기 v1.5.1
 ## 샵(#)으로 제목 크기 조절
 ### 샵(#)을 1~3개 쓰면 됩니다
 ---
@@ -2180,7 +2180,7 @@ __ __: 글자 1단계 작게
                     document.getElementById('lineHeight').value = data.settings.lineHeight || 1.3;
                     document.getElementById('fontSelect').value = data.settings.font || "Pretendard, sans-serif";
 
-                    // Set default word-break to 'break-all' if undefined (Req: v1.4.2)
+                    // Set default word-break to 'break-all' if undefined (Req: v1.5.1)
                     setWordBreak(data.settings.wordBreak || 'break-all', false);
 
                     const savedAlign = data.settings.textAlign || 'justify';
@@ -2705,7 +2705,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 
         function exportPresets() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(presets));
-            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_4_2.json");
+            const dlNode = document.createElement('a'); dlNode.setAttribute("href", dataStr); dlNode.setAttribute("download", "LogCard_presets_v1_5_1.json");
             document.body.appendChild(dlNode); dlNode.click(); dlNode.remove();
         }
 
@@ -2826,7 +2826,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
             const d = new Date();
             const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); const h = String(d.getHours()).padStart(2, '0'); const min = String(d.getMinutes()).padStart(2, '0'); const s = String(d.getSeconds()).padStart(2, '0');
             // Version Updated in Filename
-            return `Log_Card_v1_4_2_${y}${m}${day}_${h}${min}${s}.${ext}`;
+            return `Log_Card_v1_5_1_${y}${m}${day}_${h}${min}${s}.${ext}`;
         }
 
         /* =========================================
@@ -2891,7 +2891,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         }
 
 
-        // HTML Save: Generates standalone HTML with v1.4.2 headers
+        // HTML Save: Generates standalone HTML with v1.5.1 headers
         function saveHtml() {
             const content = document.getElementById('capture-area').innerHTML;
             const widthVal = document.getElementById('cardWidthInput').value;
@@ -2933,7 +2933,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Log Card Export (v1.4.2)</title>
+<title>Log Card Export (v1.5.1)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang&family=Gowun+Dodum&family=Nanum+Gothic&family=Nanum+Myeongjo&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
   @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
