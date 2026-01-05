@@ -887,6 +887,7 @@
     <div class="regex-preset-box">
         <button class="btn-regex-preset" onclick="addRegexRule('lightboard')">🤖 라이트보드 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('wncs')">⚙️ WNCS 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('nai')">🖼️ NAI 태그({{..}}) 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('response')">📝 '# 응답' 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('details')">📂 Details 태그 제거</button>
     </div>
@@ -2113,8 +2114,11 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         } else if (type === 'response') {
             newRule.pattern = '# 응답';
         } else if (type === 'details') {
-            // ✅ 요청하신 Details 태그 삭제 패턴
             newRule.pattern = '<details>[\\s\\S]*?<\\/details>';
+        } else if (type === 'nai') {
+            // {{ 와 }} 안에 있는 모든 내용을 찾습니다.
+            // 자바스크립트 문자열이라 역슬래시 2개(\\)를 씁니다.
+            newRule.pattern = '\\{\\{[\\s\\S]*?\\}\\}';
         }
 
         regexQueue.push(newRule);
