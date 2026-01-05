@@ -782,7 +782,26 @@
 
   <div id="pickerOverlay" onclick="closePicker(false)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2999;"></div>
 
+<div id="regexModal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+        <span style="font-weight:bold; font-size:14px; color:#334155;">🔡 정규식 치환 (Regex)</span>
+        <button onclick="closeRegexModal()" style="border:none; background:none; cursor:pointer; font-size:18px;">✕</button>
+    </div>
+    
+    <input type="text" id="regexPattern" class="regex-input" placeholder="찾을 패턴 (예: [0-9]+)">
+    <div class="regex-help">※ JS 정규식 문법을 지원합니다. (기본 Global 적용)</div>
+    
+    <input type="text" id="regexReplacement" class="regex-input" placeholder="바꿀 내용">
+    
+    <div style="display:flex; gap:5px; margin-top:5px;">
+         <label style="font-size:12px; display:flex; align-items:center; gap:4px;">
+            <input type="checkbox" id="regexFlagI"> 대소문자 무시 (i)
+         </label>
+    </div>
 
+    <button class="btn-save" onclick="applyRegex()" style="margin-top:10px; width:100%; text-align:center; justify-content: center;">치환 실행</button>
+</div>
+  
   <script>
     /* =========================================
        1. Data & State Management
@@ -1294,6 +1313,7 @@ __ __: 글자 1단계 작게
             ${b.type==='text' ? `<button class="btn-sm" style="background:#f3e8ff; color:#6b21a8;" onclick="wrapHtmlTags(${i})" title="HTML 보호 태그 씌우기">🛡️</button>` : ''}
             ${b.type==='text' ? `<button class="btn-sm" style="background:#fff7ed; color:#c2410c;" onclick="removeStars(${i})" title="별표(*) 지우기 (강조 제외)">🌠</button>` : ''}
             ${b.type==='text' ? `<button class="btn-sm" style="background:#f1f5f9; color:#475569;" onclick="removeEmptyLines(${i})" title="빈 줄 지우기">🧹</button>` : ''}
+${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f46e5;" onclick="openRegexModal(${i})" title="정규식 치환">®️</button>` : ''}
             ${b.type==='text' ? `<button class="btn-sm" style="background:#e0f2fe; color:#0369a1;" onclick="smartExtract(event, ${i})" title="배경색 추출">🧙‍♂️</button>` : ''}
             ${b.type==='text' ? `<button class="btn-sm" style="background:#f0fdf4; color:#15803d;" onclick="toggleConvMode(${i})" title="말풍선/따옴표 변환">💬</button>` : ''}
             ${b.type==='text' ? `<button class="btn-sm" onclick="splitBlock(event, ${i})" title="나누기">✂️</button>` : ''}
@@ -1872,6 +1892,23 @@ __ __: 글자 1단계 작게
   .parsed-h2 { font-size: 1.2em; font-weight: 700; margin: 0.5em 0; color: inherit; } 
   .parsed-h3 { font-size: 1.1em; font-weight: 700; margin: 0.4em 0 0.2em; color: inherit; opacity: 0.9; } 
   .parsed-hr { border: 0; height: 1px; background: var(--hr-col, #cbd5e1); margin: 1.5em 0; } 
+
+  /* =========================================
+   Regex Modal Styles
+   ========================================= */
+#regexModal {
+    display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 3000; background: white; padding: 20px; border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3); width: 320px;
+    flex-direction: column; gap: 10px;
+}
+.regex-input {
+    width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px;
+    font-family: monospace; font-size: 14px; outline: none;
+}
+.regex-input:focus { border-color: #3b82f6; }
+.regex-help { font-size: 11px; color: #64748b; margin-top: -5px; }
+
 </style>
 </head>
 <body>
@@ -1942,6 +1979,60 @@ __ __: 글자 1단계 작게
         document.getElementById('wb-break').className = mode === 'break-all' ? 'btn-fit active' : 'btn-fit';
         updatePreview();
         if(save) saveData();
+    }
+
+    /* =========================================
+       Regex Feature Logic
+       ========================================= */
+    let currentRegexTarget = -1;
+
+    function openRegexModal(index) {
+        currentRegexTarget = index;
+        document.getElementById('regexPattern').value = '';
+        document.getElementById('regexReplacement').value = '';
+        document.getElementById('regexModal').style.display = 'flex';
+        document.getElementById('pickerOverlay').style.display = 'block'; // 기존 오버레이 재사용
+        document.getElementById('regexPattern').focus();
+    }
+
+    function closeRegexModal() {
+        document.getElementById('regexModal').style.display = 'none';
+        document.getElementById('pickerOverlay').style.display = 'none';
+    }
+
+    function applyRegex() {
+        if (currentRegexTarget === -1) return;
+        
+        const patternStr = document.getElementById('regexPattern').value;
+        const replaceStr = document.getElementById('regexReplacement').value;
+        const ignoreCase = document.getElementById('regexFlagI').checked;
+
+        if (!patternStr) {
+            alert("찾을 패턴을 입력해주세요.");
+            return;
+        }
+
+        try {
+            // g(전체 치환) 플래그는 기본 적용, i(대소문자 무시)는 옵션
+            const flags = 'g' + (ignoreCase ? 'i' : '');
+            const regex = new RegExp(patternStr, flags);
+            
+            const oldContent = blocks[currentRegexTarget].content;
+            const newContent = oldContent.replace(regex, replaceStr);
+
+            // 변경사항 적용
+            blocks[currentRegexTarget].content = newContent;
+            
+            // 에디터 및 프리뷰 업데이트
+            const editorEl = document.getElementById(`editor-${currentRegexTarget}`);
+            if(editorEl) editorEl.value = newContent;
+            
+            updateTextContent(currentRegexTarget, newContent);
+            closeRegexModal();
+            
+        } catch (e) {
+            alert("잘못된 정규식 패턴입니다.\n" + e.message);
+        }
     }
     
   </script>
