@@ -478,6 +478,8 @@
       <div class="editor-title">로그 카드 생성기 v1.4.2</div> 
       <div style="display:flex; gap:8px;">
         <button class="btn-reset" onclick="resetAll(event)">🔄</button>
+        <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0; margin-right:4px;" onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
+<button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca; margin-right:8px;" onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
         <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; margin-right:5px;" onclick="openRegexModal(-1)" title="전체 정규식 치환">®️</button>
         <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
         
@@ -2236,6 +2238,25 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         } catch (e) {
             alert("정규식 오류 발생: " + e.message);
         }
+    }
+
+/* =========================================
+       Visibility Control (Global)
+       ========================================= */
+    function setAllVisibility(visible) {
+        // 모든 블록의 visible 상태를 변경
+        blocks.forEach(b => {
+            b.visible = visible;
+        });
+        
+        // 화면 갱신
+        renderBlocks();   // 에디터(입력창) 다시 그리기
+        updatePreview();  // 미리보기 카드 다시 그리기
+        saveData();       // 저장
+        
+        // 알림 (선택 사항)
+        // const msg = visible ? "모든 블록을 표시합니다." : "모든 블록을 숨깁니다.";
+        // alert(msg); 
     }
     
   </script>
