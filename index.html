@@ -3107,12 +3107,7 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
             document.getElementById('regexModal').style.display = 'flex';
             document.getElementById('pickerOverlay').style.display = 'block';
 
-            // 큐가 비어있으면 기본으로 빈 규칙 하나 추가
-            if (regexQueue.length === 0) {
-                addRegexRule('empty');
-            } else {
-                renderRegexList(); // 기존 규칙 보여주기
-            }
+            renderRegexList();
 
             const oneBtn = document.getElementById('btnRegexOne');
             if (index === -1) {
