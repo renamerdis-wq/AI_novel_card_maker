@@ -889,6 +889,8 @@
         <button class="btn-regex-preset" onclick="addRegexRule('wncs')">⚙️ WNCS 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('nai')">🖼️ NAI 태그({{..}}) 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('response')">📝 '# 응답' 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('says nothing')">🙊 '*says nothing*' 제거</button>
+        <button class="btn-regex-preset" onclick="addRegexRule('annotation')">✏️ 주석 제거</button>
         <button class="btn-regex-preset" onclick="addRegexRule('details')">📂 Details 태그 제거</button>
     </div>
     
@@ -2117,6 +2119,10 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
             newRule.pattern = '<details>[\\s\\S]*?<\\/details>';
         } else if (type === 'nai') {
             newRule.pattern = '<lb-NAIimg>[\\s\\S]*?</lb-NAIimg>';
+        } else if (type === 'says nothing') {
+            newRule.pattern = '\\*says nothing\\*';
+        } else if (type === 'annotation') {
+            newRule.pattern = '<!--[\\s\\S]*?-->';
         }
 
         regexQueue.push(newRule);
