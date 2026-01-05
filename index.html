@@ -3477,15 +3477,15 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         }
 
         /* =========================================
-           [New Feature] Preview Click to Edit
+           [New Feature] Preview Click to Edit (Auto Scroll Fixed)
            ========================================= */
         function setupPreviewClick() {
             const captureArea = document.getElementById('capture-area');
             
             captureArea.addEventListener('click', function(e) {
-                // 1. 클릭된 요소가 어느 블록에 속하는지 찾기
+                // 1. 클릭된 요소 식별
                 const wrapper = e.target.closest('.preview-block-item');
-                if (!wrapper) return; // 블록 밖을 클릭했으면 무시
+                if (!wrapper) return; 
 
                 const index = wrapper.getAttribute('data-index');
                 const textarea = document.getElementById(`editor-${index}`);
@@ -3497,33 +3497,41 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
                         toggleEditor();
                     }
 
-                    // 3. 클릭한 텍스트 내용 가져오기 (HTML 태그 제거된 순수 텍스트)
-                    // e.target은 클릭한 구체적인 요소(span, p 등)입니다.
+                    // 3. 클릭한 텍스트 내용 가져오기
                     let clickedText = e.target.innerText.trim();
-                    
-                    // 텍스트가 너무 짧으면(특수기호 등) 정확도가 떨어지므로, 
-                    // 부모 문단 전체를 기준으로 삼을 수도 있습니다. 여기서는 클릭한 요소 기준.
                     if (!clickedText) return;
 
-                    // 4. 에디터의 원본 텍스트(Raw Text)에서 위치 찾기
+                    // 4. 원본 텍스트에서 위치 찾기
                     const rawContent = textarea.value;
-                    
-                    // 단순 indexOf는 문서 전체에서 처음 발견된 단어로 점프하는 한계가 있지만,
-                    // 대부분의 경우 클릭한 문장 근처로 이동합니다.
-                    // (더 정교하게 하려면 줄 단위 매핑이 필요하지만, 현재 구조에선 이 정도가 최적입니다)
                     const pos = rawContent.indexOf(clickedText);
 
-                    // 5. 스크롤 이동 및 포커스
-                    // 해당 텍스트박스가 화면에 보이도록 스크롤
+                    // 5. 페이지 스크롤 이동 (에디터가 보이게)
                     textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
+                    // 6. 커서 이동 및 **내부 스크롤 조정**
                     setTimeout(() => {
                         textarea.focus();
                         if (pos !== -1) {
-                            // 찾은 위치로 커서 이동 및 텍스트 선택
+                            // (1) 커서 위치 잡기
                             textarea.setSelectionRange(pos, pos + clickedText.length);
+
+                            // (2) 줄 번호 계산 (커서 앞까지의 줄바꿈 개수 세기)
+                            const textUpToCursor = rawContent.substring(0, pos);
+                            const numberOfLines = textUpToCursor.split('\n').length;
+
+                            // (3) 한 줄의 높이(px) 계산
+                            const computedStyle = window.getComputedStyle(textarea);
+                            let lineHeight = parseInt(computedStyle.lineHeight);
+                            // 만약 line-height가 'normal' 등으로 나와서 계산 안되면 기본값(대략 21px) 사용
+                            if (isNaN(lineHeight)) lineHeight = 21; 
+
+                            // (4) 스크롤 위치 계산: (현재 줄 * 줄높이) - (화면 중앙 보정)
+                            const scrollToY = (numberOfLines * lineHeight) - (textarea.clientHeight / 2);
+
+                            // (5) 스크롤 적용
+                            textarea.scrollTop = scrollToY;
                         }
-                    }, 300); // 스크롤 애니메이션 시간을 고려해 약간 대기
+                    }, 300); 
                 }
             });
         }
