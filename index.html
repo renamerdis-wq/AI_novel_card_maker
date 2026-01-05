@@ -481,6 +481,7 @@
         <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0; margin-right:4px;" onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
 <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca; margin-right:8px;" onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
         <button class="btn-reset" style="background:#fff7ed; color:#c2410c; border-color:#ffedd5; margin-right:8px;" onclick="splitAllBlocks()" title="'---' 기준 모두 나누기">✂️All</button>
+        <button class="btn-reset" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;" onclick="deleteAllBlocks()" title="모든 블록 삭제">🗑️All</button>
         <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; margin-right:5px;" onclick="openRegexModal(-1)" title="전체 정규식 치환">®️</button>
         <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
         
@@ -2308,6 +2309,22 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         }
     }
     
+    /* =========================================
+       Delete All Blocks (Clear)
+       ========================================= */
+    function deleteAllBlocks() {
+        if (confirm("⚠️ 정말로 모든 내용을 삭제하시겠습니까?\n작성 중인 텍스트와 이미지가 모두 사라지며, 되돌릴 수 없습니다.")) {
+            // 블록 배열을 비우고, 빈 텍스트 블록 1개만 남김
+            blocks = [{type: 'text', content: ''}];
+            
+            renderBlocks();
+            updatePreview();
+            saveData();
+            
+            // 화면 스크롤을 맨 위로
+            window.scrollTo(0, 0);
+        }
+    }
     
   </script>
 </body>
