@@ -480,6 +480,7 @@
         <button class="btn-reset" onclick="resetAll(event)">🔄</button>
         <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0; margin-right:4px;" onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
 <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca; margin-right:8px;" onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
+        <button class="btn-reset" style="background:#fff7ed; color:#c2410c; border-color:#ffedd5; margin-right:8px;" onclick="splitAllBlocks()" title="'---' 기준 모두 나누기">✂️All</button>
         <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; margin-right:5px;" onclick="openRegexModal(-1)" title="전체 정규식 치환">®️</button>
         <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
         
@@ -2258,6 +2259,55 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         // const msg = visible ? "모든 블록을 표시합니다." : "모든 블록을 숨깁니다.";
         // alert(msg); 
     }
+
+
+    /* =========================================
+       Batch Split Logic
+       ========================================= */
+    function splitAllBlocks() {
+        if (!confirm("모든 텍스트 블록 내의 '---'를 기준으로 나누시겠습니까?\n(나눠진 블록 사이의 '---'는 삭제됩니다)")) return;
+
+        let newBlocks = [];
+        let splitCount = 0;
+
+        blocks.forEach(block => {
+            // 텍스트 블록이고 내용에 '---'가 있는 경우에만 처리
+            if (block.type === 'text' && block.content.includes('---')) {
+                // '---'를 기준으로 쪼개기
+                const parts = block.content.split('---');
+                
+                parts.forEach(part => {
+                    // 앞뒤 공백을 다듬고, 내용이 있는 경우에만 새 블록으로 추가
+                    const trimmedContent = part.trim();
+                    if (trimmedContent.length > 0) {
+                        newBlocks.push({
+                            type: 'text',
+                            content: trimmedContent,
+                            visible: block.visible, // 기존 숨김/표시 상태 유지
+                            width: block.width || 100
+                        });
+                    }
+                });
+                
+                // 쪼개진 횟수 카운트 (조각 개수 - 1)
+                if (parts.length > 1) splitCount += (parts.length - 1);
+            } else {
+                // 해당 없는 블록은 그대로 유지
+                newBlocks.push(block);
+            }
+        });
+
+        if (splitCount > 0) {
+            blocks = newBlocks;
+            renderBlocks();
+            updatePreview();
+            saveData();
+            alert(`총 ${splitCount}곳을 잘라내어 블록을 나누었습니다!`);
+        } else {
+            alert("나눌 수 있는 '---'가 포함된 블록이 없습니다.");
+        }
+    }
+    
     
   </script>
 </body>
