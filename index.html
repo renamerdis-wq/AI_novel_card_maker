@@ -2106,7 +2106,7 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         let newRule = { pattern: '', replace: '', ignoreCase: false };
 
         if (type === 'lightboard') {
-            newRule.pattern = '[\\s\\S]*?';
+            newRule.pattern = '<!-- Platform managed do not generate -->[\\s\\S]*?<!-- End platform managed -->';
         } else if (type === 'wncs') {
             newRule.pattern = 'WNCS\\{[\\s\\S]*?\\}';
         } else if (type === 'response') {
