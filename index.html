@@ -386,6 +386,7 @@
       <div class="editor-title">로그 카드 생성기 v1.4.1</div> 
       <div style="display:flex; gap:8px;">
         <button class="btn-reset" onclick="resetAll(event)">🔄</button>
+        <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; margin-right:5px;" onclick="openRegexModal(-1)" title="전체 정규식 치환">®️</button>
         <button class="btn-save" style="background:#475569; display:none;" onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
         
         <div style="display:flex; gap:6px;">
@@ -806,7 +807,10 @@
         <span>대소문자 구분 안 함 (Ignore Case)</span>
     </label>
 
-    <button class="btn-regex-run" onclick="applyRegex()">✨ 치환 실행하기</button>
+    <div class="regex-btn-row">
+        <button id="btnRegexOne" class="btn-regex-all" onclick="applyRegex()">👇 이 블록만</button>
+        <button class="btn-regex-run" onclick="applyRegexAll()">🌍 전체 치환</button>
+    </div>
 </div>
   
   <script>
@@ -1980,6 +1984,26 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
 .btn-regex-run:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4); }
 .btn-regex-run:active { transform: scale(0.98); }
 
+.regex-btn-row { display: flex; gap: 8px; margin-top: 8px; }
+
+.btn-regex-run { flex: 1; } /* 기존 버튼 스타일 유지 */
+
+.btn-regex-all {
+    flex: 1; padding: 12px;
+    border: none; border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569; font-weight: 700; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+}
+.btn-regex-all:hover { background: #f1f5f9; color: #0f172a; border-color: #94a3b8; }
+.btn-regex-all.primary { /* 전체 치환을 강조하고 싶을 때 */
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white; border: none;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+.btn-regex-all.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); }
+
 </style>
 </head>
 <body>
@@ -2057,15 +2081,24 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
        ========================================= */
     let currentRegexTarget = -1;
 
-    function openRegexModal(index) {
+function openRegexModal(index) {
         currentRegexTarget = index;
         document.getElementById('regexPattern').value = '';
         document.getElementById('regexReplacement').value = '';
         document.getElementById('regexModal').style.display = 'flex';
-        document.getElementById('pickerOverlay').style.display = 'block'; // 기존 오버레이 재사용
+        document.getElementById('pickerOverlay').style.display = 'block'; 
         document.getElementById('regexPattern').focus();
-    }
 
+        // 전체 모드(-1)로 열었으면 '이 블록만' 버튼 숨기기
+        const oneBtn = document.getElementById('btnRegexOne');
+        if (index === -1) {
+            oneBtn.style.display = 'none';
+        } else {
+            oneBtn.style.display = 'block';
+            oneBtn.innerText = `블록 #${index + 1}만 적용`;
+        }
+    }
+    
     function closeRegexModal() {
         document.getElementById('regexModal').style.display = 'none';
         document.getElementById('pickerOverlay').style.display = 'none';
@@ -2103,6 +2136,50 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
             
         } catch (e) {
             alert("잘못된 정규식 패턴입니다.\n" + e.message);
+        }
+    }
+
+    function applyRegexAll() {
+        const patternStr = document.getElementById('regexPattern').value;
+        const replaceStr = document.getElementById('regexReplacement').value;
+        const ignoreCase = document.getElementById('regexFlagI').checked;
+
+        if (!patternStr) { alert("찾을 패턴을 입력해주세요."); return; }
+        if (!confirm("모든 텍스트 블록에 대해 치환을 수행하시겠습니까?\n(되돌릴 수 없습니다)")) return;
+
+        try {
+            const flags = 'g' + (ignoreCase ? 'i' : '');
+            const regex = new RegExp(patternStr, flags);
+            let count = 0;
+            let changedBlocks = 0;
+
+            blocks.forEach((b, i) => {
+                if(b.type === 'text') {
+                    const oldContent = b.content;
+                    const newContent = oldContent.replace(regex, replaceStr);
+                    
+                    if(oldContent !== newContent) {
+                        blocks[i].content = newContent;
+                        changedBlocks++;
+                        // 현재 열려있는 에디터가 있다면 갱신
+                        const editorEl = document.getElementById(`editor-${i}`);
+                        if(editorEl) editorEl.value = newContent;
+                    }
+                }
+            });
+
+            if(changedBlocks > 0) {
+                renderBlocks(); // 전체 블록 다시 그리기 (내용 갱신)
+                updatePreview();
+                saveData();
+                closeRegexModal();
+                alert(`총 ${changedBlocks}개의 블록에서 내용이 변경되었습니다.`);
+            } else {
+                alert("해당 패턴을 찾지 못했습니다.");
+            }
+            
+        } catch (e) {
+            alert("오류 발생: " + e.message);
         }
     }
     
