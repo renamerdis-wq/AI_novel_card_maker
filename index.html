@@ -472,6 +472,11 @@
 }
 .btn-regex-all:hover { background: #f1f5f9; color: #0f172a; border-color: #94a3b8; }
 
+    /* 슬라이더 색상 강제 통일 */
+    input[type="range"] {
+        accent-color: #3b82f6; /* 파란색 (테마색) */
+        cursor: pointer;
+    }
     
   </style>
 </head>
@@ -2166,14 +2171,13 @@ function openRegexModal(index) {
         }
     }
 
-    /* 프리셋 자동 입력 함수 */
+    /* 프리셋 자동 입력 함수 (수정됨) */
     function fillRegexPreset(type) {
         let pattern = '';
         const replacement = ''; // 삭제니까 비워둠
 
         if (type === 'lightboard') {
-            // 라이트보드 태그 삭제
-            pattern = '[\\s\\S]*?';
+            pattern = '<!-- Platform managed do not generate -->[\\s\\S]*?<!-- End platform managed -->';
         } else if (type === 'wncs') {
             // WNCS 설정 삭제 (중괄호 이스케이프 주의)
             pattern = 'WNCS\\{[\\s\\S]*?\\}';
