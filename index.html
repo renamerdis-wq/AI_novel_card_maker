@@ -1370,10 +1370,10 @@
             <div class="editor-title">로그 카드 생성기 v1.5.1</div>
             <div class="header-btn-group">
                 <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
-                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="exportProject()" title="프로젝트 저장 (JSON)">📤 Prj 내보내기</button>
-                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)">📥 Prj 불러오기</button>
+                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="exportProject()" title="프로젝트 저장 (JSON)">📤 내보내기</button>
+                <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)">📥 불러오기</button>
 
-                <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(this)">
+                <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(this)" style="display: none;">
                 
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
                     onclick="openRegexModal(-1)" title="정규식">®️</button>
