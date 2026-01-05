@@ -2118,7 +2118,7 @@ ${b.type==='text' ? `<button class="btn-sm" style="background:#eef2ff; color:#4f
         } else if (type === 'nai') {
             // {{ 와 }} 안에 있는 모든 내용을 찾습니다.
             // 자바스크립트 문자열이라 역슬래시 2개(\\)를 씁니다.
-            newRule.pattern = '\\{\\{[\\s\\S]*?\\}\\}';
+            newRule.pattern = '<lb-NAIimg>\\{\\{[\\s\\S]*?\\}\\}</lb-NAIimg>';
         }
 
         regexQueue.push(newRule);
