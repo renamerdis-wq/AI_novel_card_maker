@@ -114,9 +114,40 @@
     }
     .index-handle:hover { background: #f8fafc; color: #2563eb; }
 
-    /* Editor Header & Controls */
-    .editor-header-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #fff; border-bottom: 1px solid #f1f5f9; border-radius: 20px 20px 0 0; }
-    .editor-title { font-size: 16px; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px; }
+    /* =========================================
+   Header Layout (Multi-line Wrap)
+   ========================================= */
+.editor-header-bar { 
+    display: flex; 
+    flex-direction: column; /* 제목과 버튼을 위아래로 배치 */
+    gap: 12px; /* 제목-버튼 사이 간격 */
+    padding: 16px; 
+    background: #fff; 
+    border-bottom: 1px solid #f1f5f9; 
+    border-radius: 20px 20px 0 0; 
+}
+
+.editor-title { 
+    font-size: 16px; font-weight: 800; color: #1e293b; 
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+}
+
+/* 버튼들을 감싸는 영역 (줄바꿈 허용) */
+.header-btn-group {
+    display: flex; 
+    flex-wrap: wrap; /* 공간이 부족하면 다음 줄로 넘어감 */
+    gap: 6px; 
+    width: 100%;
+}
+
+/* 버튼 스타일 조정 (터치하기 쉽게 꽉 채우기) */
+.header-btn-group button {
+    flex-grow: 1; /* 남은 공간을 버튼들이 나눠 가짐 */
+    display: flex; justify-content: center; align-items: center;
+    white-space: nowrap;
+    padding: 8px 12px; /* 터치 영역 확보 */
+}
     
     .main-controls { padding: 10px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     
@@ -476,19 +507,21 @@
 
     <div class="editor-header-bar" onclick="toggleEditor()">
       <div class="editor-title">로그 카드 생성기 v1.4.2</div> 
-      <div style="display:flex; gap:8px;">
-        <button class="btn-reset" onclick="resetAll(event)">🔄</button>
-        <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0; margin-right:4px;" onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
-<button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca; margin-right:8px;" onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
-        <button class="btn-reset" style="background:#fff7ed; color:#c2410c; border-color:#ffedd5; margin-right:8px;" onclick="splitAllBlocks()" title="'---' 기준 모두 나누기">✂️All</button>
-        <button class="btn-reset" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;" onclick="deleteAllBlocks()" title="모든 블록 삭제">🗑️All</button>
-        <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; margin-right:5px;" onclick="openRegexModal(-1)" title="전체 정규식 치환">®️</button>
-        <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
-        
-        <div style="display:flex; gap:6px;">
-  <button class="btn-save" style="padding: 8px 10px;" onclick="event.stopPropagation(); saveImage(this, 'standard')">📷 기본 저장</button>
-  <button class="btn-save" style="background:#334155; padding: 8px 10px;" onclick="event.stopPropagation(); saveImage(this, 'high')">✨ 고화질 저장</button>
-</div>  
+      <div class="header-btn-group">
+        <button class="btn-reset" onclick="resetAll(event)" title="초기화">🔄</button>
+    <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;" onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
+    <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca;" onclick="setAllVisibility(false)" title="모두 숨기기">🙈All</button>
+    <button class="btn-reset" style="background:#fff7ed; color:#c2410c; border-color:#ffedd5;" onclick="splitAllBlocks()" title="나누기">✂️All</button>
+    <button class="btn-reset" style="background:#fee2e2; color:#b91c1c; border-color:#fecaca;" onclick="deleteAllBlocks()" title="삭제">🗑️All</button>
+    
+    <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;" onclick="openRegexModal(-1)" title="정규식">®️</button>
+    
+    <button class="btn-save" style="background:#475569; " onclick="event.stopPropagation(); saveHtml()">💾 HTML 저장</button>
+    <button class="btn-save" style="padding: 8px 10px;" onclick="event.stopPropagation(); saveImage(this, 'standard')">📷 기본 저장</button>
+    <button class="btn-save" style="background:#334155; padding: 8px 10px;" onclick="event.stopPropagation(); saveImage(this, 'high')">✨ 고화질</button>
+  </div>
+</div>
+
       
       </div>
     </div>
