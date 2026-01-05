@@ -3477,56 +3477,64 @@ ${b.type === 'text' ? `<button class="btn-sm" style="background:#eef2ff; color:#
         }
 
         /* =========================================
-           [New Feature] Preview Click to Edit
-           ========================================= */
-        function setupPreviewClick() {
-            const captureArea = document.getElementById('capture-area');
+   [수정됨] Preview Click to Edit (따옴표 호환성 개선)
+   ========================================= */
+function setupPreviewClick() {
+    const captureArea = document.getElementById('capture-area');
+    
+    captureArea.addEventListener('click', function(e) {
+        // 1. 클릭된 요소가 어느 블록에 속하는지 찾기
+        const wrapper = e.target.closest('.preview-block-item');
+        if (!wrapper) return; 
+
+        const index = wrapper.getAttribute('data-index');
+        const textarea = document.getElementById(`editor-${index}`);
+        
+        if (textarea) {
+            // 2. 에디터 패널이 닫혀있다면 열기
+            const editorArea = document.getElementById('editorArea');
+            if (editorArea.classList.contains('collapsed')) {
+                toggleEditor();
+            }
+
+            // 3. 클릭한 텍스트 내용 가져오기
+            let clickedText = e.target.innerText.trim();
+            if (!clickedText) return;
+
+            // 4. 에디터의 원본 텍스트(Raw Text)에서 위치 찾기
+            const rawContent = textarea.value;
             
-            captureArea.addEventListener('click', function(e) {
-                // 1. 클릭된 요소가 어느 블록에 속하는지 찾기
-                const wrapper = e.target.closest('.preview-block-item');
-                if (!wrapper) return; // 블록 밖을 클릭했으면 무시
+            // [수정 포인트] 1차 시도: 있는 그대로 찾기
+            let pos = rawContent.indexOf(clickedText);
 
-                const index = wrapper.getAttribute('data-index');
-                const textarea = document.getElementById(`editor-${index}`);
-                
-                if (textarea) {
-                    // 2. 에디터 패널이 닫혀있다면 열기
-                    const editorArea = document.getElementById('editorArea');
-                    if (editorArea.classList.contains('collapsed')) {
-                        toggleEditor();
-                    }
+            // [수정 포인트] 2차 시도: 실패했다면 스마트 따옴표를 일반 따옴표로 변환해 찾기
+            if (pos === -1) {
+                // “, ” -> " 로 변경 / ‘, ’ -> ' 로 변경
+                const normalizedText = clickedText.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+                pos = rawContent.indexOf(normalizedText);
+            }
 
-                    // 3. 클릭한 텍스트 내용 가져오기 (HTML 태그 제거된 순수 텍스트)
-                    // e.target은 클릭한 구체적인 요소(span, p 등)입니다.
-                    let clickedText = e.target.innerText.trim();
-                    
-                    // 텍스트가 너무 짧으면(특수기호 등) 정확도가 떨어지므로, 
-                    // 부모 문단 전체를 기준으로 삼을 수도 있습니다. 여기서는 클릭한 요소 기준.
-                    if (!clickedText) return;
-
-                    // 4. 에디터의 원본 텍스트(Raw Text)에서 위치 찾기
-                    const rawContent = textarea.value;
-                    
-                    // 단순 indexOf는 문서 전체에서 처음 발견된 단어로 점프하는 한계가 있지만,
-                    // 대부분의 경우 클릭한 문장 근처로 이동합니다.
-                    // (더 정교하게 하려면 줄 단위 매핑이 필요하지만, 현재 구조에선 이 정도가 최적입니다)
-                    const pos = rawContent.indexOf(clickedText);
-
-                    // 5. 스크롤 이동 및 포커스
-                    // 해당 텍스트박스가 화면에 보이도록 스크롤
-                    textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    
-                    setTimeout(() => {
-                        textarea.focus();
-                        if (pos !== -1) {
-                            // 찾은 위치로 커서 이동 및 텍스트 선택
-                            textarea.setSelectionRange(pos, pos + clickedText.length);
-                        }
-                    }, 300); // 스크롤 애니메이션 시간을 고려해 약간 대기
+            // [수정 포인트] 3차 시도: 그래도 실패했다면(스타일 태그 등으로 인해), 앞뒤 따옴표를 떼고 알맹이만 찾기
+            if (pos === -1) {
+                const strippedText = clickedText.replace(/^["“”'‘’]/, '').replace(/["“”'‘’]$/, '');
+                if (strippedText.length > 2) { // 너무 짧은 단어는 오작동 방지
+                    pos = rawContent.indexOf(strippedText);
                 }
-            });
+            }
+
+            // 5. 스크롤 이동 및 포커스
+            textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            setTimeout(() => {
+                textarea.focus();
+                if (pos !== -1) {
+                    // 찾은 위치로 커서 이동 및 텍스트 선택
+                    textarea.setSelectionRange(pos, pos + clickedText.length);
+                }
+            }, 300);
         }
+    });
+}
 
     </script>
 </body>
