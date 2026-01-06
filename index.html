@@ -1333,6 +1333,59 @@
             border-color: #94a3b8;
         }
 
+        /* =========================================
+           Bookmarklet Modal Styles
+           ========================================= */
+        #bookmarkletModal {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+            width: 380px;
+            padding: 24px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .bookmarklet-pill {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 15px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            cursor: grab; /* 드래그 가능한 느낌 */
+            border: 2px dashed #93c5fd;
+            transition: transform 0.2s;
+        }
+
+        .bookmarklet-pill:hover {
+            transform: scale(1.05);
+            background: #2563eb;
+        }
+
+        .bookmarklet-desc {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        
+
         /* 슬라이더 색상 강제 통일 */
         input[type="range"] {
             accent-color: #3b82f6;
@@ -1381,6 +1434,8 @@
                 
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
                     onclick="openRegexModal(-1)" title="정규식">®️</button>
+                <button class="btn-reset" style="background:#fffbeb; color:#b45309; border-color:#fcd34d;" 
+                    onclick="openBookmarkletModal()" title="케이브덕 저장 북마크릿 만들기">🔖 북마크릿 생성</button>
                 <button class="btn-reset" style="background:#f0fdf4; color:#15803d; border-color:#bbf7d0;"
                     onclick="setAllVisibility(true)" title="모두 보이기">👁️All</button>
                 <button class="btn-reset" style="background:#fef2f2; color:#ef4444; border-color:#fecaca;"
@@ -1899,6 +1954,28 @@
             <button class="btn-regex-run" onclick="executeRegexQueue(true)">🌍 전체 일괄 적용</button>
         </div>
     </div>
+
+    <div id="bookmarkletModal">
+        <div style="font-size:18px; font-weight:800; color:#1e293b; margin-bottom:5px;">
+            🔖 북마크릿 가져가기
+        </div>
+        
+        <div class="bookmarklet-desc">
+            보안상 버튼 클릭만으로는 추가할 수 없습니다.<br>
+            아래 <b>파란 버튼</b>을 마우스로 잡고<br>
+            브라우저 상단 <b>[즐겨찾기 바]</b>로<br>
+            <b>드래그 & 드롭</b> 해주세요!
+        </div>
+
+        <div style="padding:10px;">
+            <a class="bookmarklet-pill" href='javascript:(async function(){alert("🚀 자동 저장을 시작합니다! 완료 알림이 뜰 때까지 기다려주세요.");while(true){let btn=Array.from(document.querySelectorAll("button")).find(b=>b.innerText.trim()==="더 보기");if(btn){btn.click();await new Promise(r=>setTimeout(r,1500))}else{break}}let msgs=document.querySelectorAll("p.text-caveduck-shadow");let res=[];let lastP=null;msgs.forEach(m=>{let txt=m.innerText.trim();if(!txt)return;let curP=m.parentElement;if(lastP&&curP!==lastP)res.push("\n---\n");lastP=curP;let st=m.getAttribute("style")||"";if(st.includes("--color-user-message")||st.includes("--color-char-message"))res.push(`"${txt}"`);else res.push(txt)});let blob=new Blob([res.join("\n")],{type:"text/plain"});let link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download=`케이브덕_${new Date().toISOString().slice(0,10)}.txt`;document.body.appendChild(link);link.click();document.body.removeChild(link);alert("✅ 저장 완료! 다운로드 폴더를 확인하세요.");})();' onclick="alert(&quot;클릭하는 게 아닙니다!\n버튼을 잡고 브라우저 위쪽 즐겨찾기 바로 '드래그' 하세요.&quot;); return false;">
+                📥 케이브덕 저장기
+            </a>
+        </div>
+
+        <button class="btn-save" style="background:#64748b; margin-top:10px;" onclick="closeBookmarkletModal()">닫기</button>
+    </div>
+    
 
     <script>
         /* =========================================
@@ -3623,6 +3700,19 @@ function processAutoLog(input) {
     reader.readAsText(file); // 텍스트 파일 읽기 실행
     input.value = ''; // 다음에도 같은 파일을 선택할 수 있게 초기화
 }
+
+        /* =========================================
+           Bookmarklet Modal Logic
+           ========================================= */
+        function openBookmarkletModal() {
+            document.getElementById('bookmarkletModal').style.display = 'flex';
+            document.getElementById('pickerOverlay').style.display = 'block';
+        }
+
+        function closeBookmarkletModal() {
+            document.getElementById('bookmarkletModal').style.display = 'none';
+            document.getElementById('pickerOverlay').style.display = 'none';
+        }
 
     </script>
 </body>
