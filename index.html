@@ -3594,7 +3594,7 @@ function processAutoLog(input) {
                 content = content.replace(/WNCS\{[\s\S]*?\}/g, '');
                 content = content.replace(/# 응답/g, '');
                 content = content.replace(/<details>[\s\S]*?<\/details>/g, '');
-                content = content.replace(/<lb-NAIimg>[\s\S]*?</lb-NAIimg>/g, '');
+                content = content.replace(/<lb-NAIimg>[\s\S]*?<\/lb-NAIimg>/g, '');
                                                   content = content.replace(/\*says nothing\*/g, '');
         content = content.replace(/<!--[\s\S]*?-->/g, '');
         content = content.replace(/^\s*[\r\n]/g, '');
