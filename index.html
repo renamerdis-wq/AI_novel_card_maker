@@ -1374,6 +1374,10 @@
                 <button class="btn-reset" style="background:#f3e8ff; color:#6b21a8; border-color:#d8b4fe;" onclick="document.getElementById('projectFileInput').click()" title="프로젝트 불러오기 (JSON)">📥 불러오기</button>
 
                 <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(this)" style="display: none;">
+
+                <button class="btn-reset" style="background:#fae8ff; color:#86198f; border-color:#f0abfc; font-weight:bold;" onclick="document.getElementById('autoLogInput').click()" title="txt 파일을 선택하면 정규식을 자동으로 적용해 불러옵니다.">⚡ Risu 로그 자동 변환</button>
+
+                <input type="file" id="autoLogInput" accept=".txt" onchange="processAutoLog(this)" style="display: none;">
                 
                 <button class="btn-reset" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;"
                     onclick="openRegexModal(-1)" title="정규식">®️</button>
@@ -1390,7 +1394,7 @@
                 <button class="btn-save" style="padding: 8px 10px;"
                     onclick="event.stopPropagation(); saveImage(this, 'standard')">📷 기본 저장</button>
                 <button class="btn-save" style="background:#334155; padding: 8px 10px;"
-                    onclick="event.stopPropagation(); saveImage(this, 'high')">✨ 고화질</button>
+                    onclick="event.stopPropagation(); saveImage(this, 'high')">✨ 고화질 저장</button>
 
             </div>
         </div>
@@ -2077,23 +2081,58 @@ __ __: 글자 1단계 작게
         // =========================================
         // 2. Initialization & Global Events
         // =========================================
+        
+
         window.onload = function () {
-            loadData();
-            initPresets();
-            renderBlocks();
-            updateUI();
-            updatePreview();
-            setBgSize(bgState.sizeMode, false);
+    loadData();
+    initPresets();
+    renderBlocks();
+    updateUI();
+    setBgSize(bgState.sizeMode, false);
+    setupPreviewClick();
 
-            setupPreviewClick();
+    // =========================================
+    // [수정됨] 초기 줌 배율 설정 로직
+    // PC: 100%, 모바일: 가로 폭 맞춤(Width-Fit)
+    // =========================================
+    const isPC = window.matchMedia("(min-width: 1024px)").matches;
+    
+    if (isPC) {
+        // PC는 100% 고정
+        currentZoom = 100;
+    } else {
+        // 모바일은 화면 가로 너비에 카드를 꽉 차게 맞춤
+        const cardWidth = parseInt(document.getElementById('cardWidthInput').value) || 1080;
+        // preview-container의 좌우 패딩(20px+20px=40px)을 고려하여 계산
+        const availableWidth = window.innerWidth - 40; 
+        
+        // 배율 계산 (화면너비 / 카드너비)
+        let calcZoom = (availableWidth / cardWidth) * 100;
+        
+        // 너무 작아지거나 커지는 것 방지 (최소 10%, 최대 100%)
+        calcZoom = Math.max(10, Math.min(calcZoom, 100));
+        
+        currentZoom = Math.floor(calcZoom);
+    }
 
-            window.addEventListener('resize', updatePreview);
+    // 슬라이더 UI와 라벨 업데이트
+    const zoomRange = document.getElementById('zoomRange');
+    const zoomLabel = document.getElementById('zoomLabel');
+    if (zoomRange) zoomRange.value = currentZoom;
+    if (zoomLabel) zoomLabel.innerText = currentZoom + '%';
 
-            // Editor panel initial state
-            document.getElementById('editorArea').classList.add('collapsed');
-            const isPC = window.matchMedia("(min-width: 1024px)").matches;
-            document.getElementById('foldIcon').innerText = isPC ? '▲' : '▲';
-        };
+    // 최종 적용
+    updatePreview(); 
+    // =========================================
+
+
+    window.addEventListener('resize', updatePreview);
+
+    // Editor panel initial state
+    document.getElementById('editorArea').classList.add('collapsed');
+    // const isPC check duplicated merely for icon logic inside original code
+    document.getElementById('foldIcon').innerText = isPC ? '▲' : '▲';
+};
 
         window.addEventListener('beforeunload', (event) => { event.preventDefault(); event.returnValue = ''; });
 
@@ -3534,6 +3573,67 @@ function setupPreviewClick() {
             }, 300);
         }
     });
+}
+
+        /* =========================================
+   [추가된 기능] 텍스트 파일 자동 정규식 변환 & 로드
+   ========================================= */
+function processAutoLog(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        let content = e.target.result;
+        
+        // -----------------------------------------------------------
+        // 1. 여기에 적용할 정규식 규칙을 모두 모아둡니다.
+        // -----------------------------------------------------------
+        
+        // (1) Lightboard / Platform 태그 제거
+        content = content.replace(/<lightboard-NAI>[\s\S]*?<\/lightboard-NAI>/g, '');
+        content = content.replace(/<lb-lazy[\s\S]*?<\/lb-lazy>/g, '');
+        content = content.replace(/<lightboard-kakaochat[\s\S]*?<\/lightboard-kakaochat>/g, '');
+        content = content.replace(/[\s\S]*?/g, '');
+        
+        // (2) NAI 이미지 태그 제거
+        content = content.replace(/<lb-NAIimg>[\s\S]*?<\/lb-NAIimg>/g, '');
+        
+        // (3) WNCS (댓글창 등) 제거
+        content = content.replace(/WNCS\{[\s\S]*?\}/g, '');
+        
+        // (4) 주석 및 시스템 메시지 제거
+        content = content.replace(//g, '');
+        content = content.replace(/<details>[\s\S]*?<\/details>/g, '');
+        content = content.replace(/# 응답/g, '');
+        content = content.replace(/\*says nothing\*/g, '');
+
+        // (5) 불필요한 공백 줄이기 (3줄 이상 엔터를 2줄로)
+        content = content.replace(/\n{3,}/g, '\n\n');
+        
+        // -----------------------------------------------------------
+        
+        // 2. 변환된 내용을 새 텍스트 블록으로 추가
+        blocks.push({
+            type: 'text',
+            content: content.trim(),
+            visible: true
+        });
+
+        // 3. 화면 갱신 및 저장
+        renderBlocks();
+        updatePreview();
+        saveData();
+        
+        // 4. 완료 알림 및 스크롤 이동
+        alert("⚡ 텍스트 자동 변환 완료!\n잡다한 태그를 모두 제거하고 로드했습니다.");
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight); // 맨 아래로 스크롤
+        }, 100);
+    };
+    
+    reader.readAsText(file); // 텍스트 파일 읽기 실행
+    input.value = ''; // 다음에도 같은 파일을 선택할 수 있게 초기화
 }
 
     </script>
