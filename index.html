@@ -3590,13 +3590,14 @@ function processAutoLog(input) {
         // 1. 여기에 적용할 정규식 규칙을 모두 모아둡니다.
         // -----------------------------------------------------------
         
-        content = content.replace(/<!-- Platform managed do not generate -->[\s\S]*?<!-- End platform managed -->/g, '');
-                content = content.replace(/WNCS\{[\s\S]*?\}/g, '');
-                content = content.replace(/# 응답/g, '');
-                content = content.replace(/<details>[\s\S]*?<\/details>/g, '');
-                content = content.replace(/<lb-NAIimg>[\s\S]*?<\/lb-NAIimg>/g, '');
-                                                  content = content.replace(/\*says nothing\*/g, '');
-        content = content.replace(/<!--[\s\S]*?-->/g, '');
+        content = content.replace(/<!-- Platform managed do not generate -->[\s\S]*?<!-- End platform managed -->/g, ''); // 라이트보드 제거
+        content = content.replace(/WNCS\{[\s\S]*?\}/g, ''); //WNCS 제거
+        content = content.replace(/<lb-NAIimg>[\s\S]*?<\/lb-NAIimg>/g, ''); // 나이 태그 제거
+        content = content.replace(/# 응답/g, ''); //# 응답 제거
+        content = content.replace(/\*says nothing\*/g, ''); //says nothing 제거
+        content = content.replace(/<!--[\s\S]*?-->/g, ''); //주석 제거
+        content = content.replace(/<details>[\s\S]*?<\/details>/g, ''); //디테일 테그 제거
+        content = content.replace(//g, '');
         content = content.replace(/^\s*[\r\n]/g, '');
         
         // -----------------------------------------------------------
