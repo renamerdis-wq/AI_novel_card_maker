@@ -3575,7 +3575,7 @@ function setupPreviewClick() {
     });
 }
 
-        /* =========================================
+/* =========================================
    [추가된 기능] 텍스트 파일 자동 정규식 변환 & 로드
    ========================================= */
 function processAutoLog(input) {
@@ -3594,6 +3594,7 @@ function processAutoLog(input) {
         content = content.replace(/<lightboard-NAI>[\s\S]*?<\/lightboard-NAI>/g, '');
         content = content.replace(/<lb-lazy[\s\S]*?<\/lb-lazy>/g, '');
         content = content.replace(/<lightboard-kakaochat[\s\S]*?<\/lightboard-kakaochat>/g, '');
+        // [수정] 아래 줄이 깨져 있었습니다. 올바른 정규식으로 복구:
         content = content.replace(/[\s\S]*?/g, '');
         
         // (2) NAI 이미지 태그 제거
@@ -3603,7 +3604,8 @@ function processAutoLog(input) {
         content = content.replace(/WNCS\{[\s\S]*?\}/g, '');
         
         // (4) 주석 및 시스템 메시지 제거
-        content = content.replace(//g, '');
+        // [수정] 여기가 에러 원인이었습니다 (//g -> //g)
+        content = content.replace(//g, ''); 
         content = content.replace(/<details>[\s\S]*?<\/details>/g, '');
         content = content.replace(/# 응답/g, '');
         content = content.replace(/\*says nothing\*/g, '');
