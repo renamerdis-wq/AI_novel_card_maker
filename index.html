@@ -2155,6 +2155,44 @@
                 hlbg: '#ffe4e6', hltx: '#881337', th: '#be123c', it: '#9f1239', bd: '#881337', qt: '#fb7185',
                 bb_l_bg: '#fff1f2', bb_l_tx: '#881337', bb_r_bg: '#f43f5e', bb_r_tx: '#ffffff',
                 sms_bg: '#ffe4e6', sms_tx: '#881337' // 추가됨
+            },
+            {
+                name: '오리 모드',
+                bg1: '#3E3E3EFF',
+                bg2: '#3E3E3EFF',
+                text: '#dfe6e9',
+                hr: '#636e72',
+                hlbg: '#2d3436',
+                hltx: '#FCC400',
+                th: '#CC9F00FF',
+                it: '#dfe6e9',
+                bd: '#ffffff',
+                qt: '#636e72',
+                bb_l_bg: '#2d3436',
+                bb_l_tx: '#dfe6e9',
+                bb_r_bg: '#0984e3',
+                bb_r_tx: '#ffffff',
+                sms_bg: '#2d3436',
+                sms_tx: '#dfe6e9',
+            },
+            {
+                name: '주인장 마음',
+                bg1: '#F4FCFFFF',
+                bg2: '#ECF9FFFF',
+                text: '#1C1C1CFF',
+                hr: '#C0DBE8FF',
+                hlbg: '#E0F2FFFF',
+                hltx: '#002D43FF',
+                th: '#20A5EDFF',
+                it: '#00A6FFFF',
+                bd: '#003D74FF',
+                qt: '#795548',
+                bb_l_bg: '#D8EEFFFF',
+                bb_l_tx: '#0c4a6e',
+                bb_r_bg: '#0ea5e9',
+                bb_r_tx: '#ffffff',
+                sms_bg: '#7F7F7FFF',
+                sms_tx: '#F6F6F6FF',
             }
         ];
 
@@ -2871,7 +2909,7 @@ __ __: 글자 1단계 작게
             presets.forEach((p, idx) => {
                 const b = document.createElement('div'); b.className = 'btn-preset';
                 b.style.background = `linear-gradient(135deg, ${p.bg1}, ${p.bg2})`; b.title = p.name || '프리셋'; b.onclick = () => { applyPreset(p); };
-                if (idx >= 12) {
+                if (idx >= 14) {
                     b.classList.add('deletable');
                     b.onclick = (e) => {
                         const rect = b.getBoundingClientRect(); const isX = (e.clientX - rect.right) > -15 && (e.clientY - rect.top) < 15;
