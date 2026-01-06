@@ -3597,8 +3597,7 @@ function processAutoLog(input) {
         content = content.replace(/\*says nothing\*/g, ''); //says nothing 제거
         content = content.replace(/<!--[\s\S]*?-->/g, ''); //주석 제거
         content = content.replace(/<details>[\s\S]*?<\/details>/g, ''); //디테일 테그 제거
-        content = content.replace(//g, '');
-        content = content.replace(/^\s*[\r\n]/g, '');
+        content = content.replace(/^\s*[\r\n]/g, ''); //공백줄 제거
         
         // -----------------------------------------------------------
         
