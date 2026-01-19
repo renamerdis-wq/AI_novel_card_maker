@@ -1419,37 +1419,57 @@
             cursor: pointer;
         }
 
-        /* =========================================
-           [NEW] WNCS 댓글창 스타일
+       /* =========================================
+           [NEW] WNCS 댓글창 스타일 (반응형 폰트 적용)
            ========================================= */
+        /* 기본 폰트 사이즈를 상속받지 않고 독자적인 비율(em)을 사용 */
         .wncs-details { background: #1e1e1e; margin: 15px 0; border: 1px solid #333; border-radius: 8px; font-family: 'Noto Sans KR', sans-serif; text-align: left; }
-        .wncs-summary { cursor: pointer; padding: 6px 18px; font-weight: bold; font-size: 14px; color: #e0e0e0; background: #282828; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; transition: .2s; }
-        .wncs-summary-ep { font-weight: 400; font-size: 13px; color: #bbbbbb; }
+        
+        /* ── 상단 요약 ── */
+        .wncs-summary { cursor: pointer; padding: 6px 18px; font-weight: bold; font-size: 0.35em; color: #e0e0e0; background: #282828; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; transition: .2s; }
+        .wncs-summary-ep { font-weight: 400; font-size: 0.9em; color: #bbbbbb; } /* 부모 대비 0.9 */
         .wncs-details .wncs-summary:hover { background: #303030; }
         .wncs-details[open] .wncs-summary { border-bottom: 1px solid #333; }
+        
+        /* ── 컨테이너 ── */
         .wncs-container { padding: 15px 20px; color: #c9c9c9; background: #222; border-radius: 0 0 8px 8px; }
+        
+        /* ── 작가의 말 ── */
         .wncs-author-note { background: #191919; padding: 5px 14px 12px 14px; border: 1px solid #333; border-radius: 6px; margin-bottom: 14px; }
-        .wncs-author-title { font-size: 13px; font-weight: 600; color: #26f2a4; margin-bottom: 1px; }
-        .wncs-author-content { font-size: 13px; line-height: 1.8; color: #d0d0d0; white-space: pre-wrap; }
+        .wncs-author-title { font-size: 0.3em; font-weight: 600; color: #26f2a4; margin-bottom: 1px; }
+        .wncs-author-content { font-size: 0.3em; line-height: 1.8; color: #d0d0d0; white-space: pre-wrap; }
+        
+        /* ── 헤더 (댓글 수) ── */
         .wncs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #383838; }
-        .wncs-header h2 { font-size: 20px; color: #e0e0e0; margin: 0; }
-        .wncs-header-filters span { margin-left: 15px; cursor: pointer; color: #aaa; font-size: 14px; padding: 4px 8px; border-radius: 4px; }
+        .wncs-header h2 { font-size: 0.5em; color: #e0e0e0; margin: 0; }
+        .wncs-header-filters span { margin-left: 15px; cursor: pointer; color: #aaa; font-size: 0.35em; padding: 4px 8px; border-radius: 4px; }
         .wncs-filter-active { color: #e0e0e0; font-weight: bold; background: #333; }
+        
+        /* ── 댓글 ── */
         .wncs-comment-thread { margin-bottom: 10px; }
         .wncs-comment { border-bottom: 1px dotted #444; }
         .wncs-main-comment { padding: 0; }
-        .wncs-best-badge { background: transparent; color: #3bff8a; border: 1px solid #3bff8a; padding: 2px 8px; font-size: 11px; line-height: 1; font-weight: bold; border-radius: 9999px; margin-right: 5px; vertical-align: middle; }
-        .wncs-comment-meta { display: flex; align-items: center; font-size: 13px; color: #aaa; margin-bottom: 2px; }
+        
+        /* BEST 뱃지 */
+        .wncs-best-badge { background: transparent; color: #3bff8a; border: 1px solid #3bff8a; padding: 2px 8px; font-size: 0.25em; line-height: 1; font-weight: bold; border-radius: 9999px; margin-right: 5px; vertical-align: middle; }
+        
+        /* 메타 정보 */
+        .wncs-comment-meta { display: flex; align-items: center; font-size: 0.3em; color: #aaa; margin-bottom: 2px; }
         .wncs-nickname { color: #c9c9c9; font-weight: 450; margin-right: 10px; }
-        .wncs-date { margin-left: auto; margin-right: 6px; font-size: 12px; color: #888; }
-        .wncs-options-button { color: #777; font-size: 16px; padding: 0 5px; background: none; border: none; cursor: pointer; }
-        .wncs-comment-content { font-size: 14px; line-height: 1.6; color: #f5f5f5; white-space: pre-wrap; }
-        .wncs-comment-actions { margin-top: 4px; display: flex; align-items: center; font-size: 14px; padding-bottom: 8px; }
-        .wncs-episode { font-size: 12px; color: #888; margin-right: auto; }
-        .wncs-like-button, .wncs-reply-button { background: none; border: none; color: #999; cursor: pointer; padding: 4px 8px; display: inline-flex; align-items: center; border-radius: 4px; transition: .2s; font-size: 14px; }
+        .wncs-date { margin-left: auto; margin-right: 6px; font-size: 0.9em; color: #888; }
+        .wncs-options-button { color: #777; font-size: 1.2em; padding: 0 5px; background: none; border: none; cursor: pointer; }
+        
+        /* 본문 (핵심: 0.35em = 기본 45px일 때 약 15.75px) */
+        .wncs-comment-content { font-size: 0.35em; line-height: 1.6; color: #f5f5f5; white-space: pre-wrap; }
+        
+        /* 액션 라인 */
+        .wncs-comment-actions { margin-top: 4px; display: flex; align-items: center; font-size: 0.35em; padding-bottom: 8px; }
+        .wncs-episode { font-size: 0.8em; color: #888; margin-right: auto; }
+        .wncs-like-button, .wncs-reply-button { background: none; border: none; color: #999; cursor: pointer; padding: 4px 8px; display: inline-flex; align-items: center; border-radius: 4px; transition: .2s; font-size: 1em; }
         .wncs-like-button { margin-right: 4px; }
-        .wncs-like-icon, .wncs-reply-icon { font-size: 16px; margin-right: 5px; }
-        /* 대댓글 토글 로직 (체크박스) */
+        .wncs-like-icon, .wncs-reply-icon { font-size: 1.1em; margin-right: 5px; }
+        
+        /* 대댓글 */
         .wncs-reply-toggle-checkbox { position: absolute; left: -9999px; width: 0; height: 0; opacity: 0; }
         .wncs-replies-container { display: none; margin-left: 25px; border-left: 2px solid #404040; margin-top: 10px; }
         .wncs-reply-toggle-checkbox:checked ~ .wncs-replies-container { display: block; }
@@ -1457,6 +1477,7 @@
         .wncs-reply-comment { padding: 8px 0; border-bottom: 1px solid #3a3a3a; }
         .wncs-reply-comment:first-child { padding-top: 0; }
         .wncs-reply-comment:last-child { padding-bottom: 0; border-bottom: none; }
+        .wncs-reply-comment .wncs-nickname { font-size: 0.9em; } /* 대댓글 닉네임 */
         
                 
     </style>
@@ -3145,16 +3166,38 @@ __ __: 글자 1단계 작게
         function mergeUp(i) { if (confirm('위 블록과 합치시겠습니까?')) { blocks[i - 1].content += "\n" + blocks[i].content; blocks.splice(i, 1); renderBlocks(); updatePreview(); saveData(); } }
         function moveBlock(i, d) { const n = i + d; if (n < 0 || n >= blocks.length) return;[blocks[n], blocks[i]] = [blocks[i], blocks[n]]; renderBlocks(); updatePreview(); saveData(); }
 
+        /* =========================================
+           이미지 너비 조절 함수
+           ========================================= */
         function updateImgWidth(i, v, source) {
             let val = parseInt(v);
-            if (val < 10) val = 10;
-            if (val > 100) val = 100;
-            blocks[i].width = val;
+        
+            // 1. 값이 없거나 숫자가 아니면(다 지웠을 때) 무시
+            if (isNaN(val)) return;
+        
+            // 2. 실제 데이터 적용용 '안전한 값' 계산 (10~100 사이로 제한)
+            // 사용자가 '5'라고 쳐도 내부적으로는 '10'으로 처리해 프리뷰가 깨지지 않게 함
+            let safeVal = val;
+            if (safeVal < 10) safeVal = 10;
+            if (safeVal > 100) safeVal = 100;
+        
+            blocks[i].width = safeVal;
+        
             const rangeEl = document.getElementById(`img-range-${i}`);
             const numEl = document.getElementById(`img-num-${i}`);
-            if (rangeEl) rangeEl.value = val;
-            if (numEl) numEl.value = val;
-            updatePreview(); saveData();
+        
+            // 3. 슬라이더는 항상 안전한 값으로 업데이트
+            if (rangeEl) rangeEl.value = safeVal;
+        
+            // 4. [핵심 수정] 텍스트 입력창 업데이트 로직 변경
+            // 슬라이더를 움직였을 때(source !== 'number')만 텍스트창을 강제로 바꿈.
+            // 직접 타이핑 중(source === 'number')일 때는 건드리지 않아서 입력을 방해하지 않음.
+            if (numEl && source !== 'number') {
+                numEl.value = safeVal;
+            }
+        
+            updatePreview();
+            saveData();
         }
 
         function toggleImgLock(i, isLocked) {
