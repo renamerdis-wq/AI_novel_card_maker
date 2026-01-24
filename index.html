@@ -1849,6 +1849,20 @@
 
                     <div class="style-row">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>🧩 커스텀/CSS 배율:</span>
+                            <div style="display:flex; align-items:center; gap:5px;">
+                                <input type="number" id="input-cssScale" class="val-display" value="1.0" step="0.1"
+                                    style="width:55px; border:1px solid #e2e8f0; border-radius:4px; text-align:right;"
+                                    oninput="syncSlider('cssScale', this.value)"> (배)
+                            </div>
+                        </div>
+                        <input type="range" id="cssScale" min="0.5" max="3.0" step="0.1" value="1.0"
+                            oninput="syncInput('cssScale', this.value)">
+                    </div>
+                                        
+
+                    <div class="style-row">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
                             <span>글자 굵기:</span>
                             <div style="display:flex; align-items:center; gap:5px;">
                                 <input type="number" id="input-fontWeight" class="val-display" value="400" step="100"
@@ -2546,6 +2560,7 @@ __ __: 글자 1단계 작게
                     paraSpacing: document.getElementById('paraSpacing').value,
                     textAlign: document.getElementById('textAlignInput').value,
                     wordBreak: document.getElementById('wordBreakInput').value,
+                    cssScale: document.getElementById('cssScale').value,
                     wncsScale: document.getElementById('wncsScale').value, // 추가
                     noItalic: document.getElementById('noItalic').checked
                 }
@@ -2565,6 +2580,12 @@ __ __: 글자 1단계 작게
                 if (data.bgState) bgState = data.bgState;
                 if (data.blocks) blocks = data.blocks;
                 if (data.presets) presets = data.presets;
+                if (data.settings.cssScale) {
+                    document.getElementById('cssScale').value = data.settings.cssScale;
+                    updateVal('cssScale', data.settings.cssScale); // 숫자창 동기화 (updateVal 함수가 있다면)
+                    if(document.getElementById('input-cssScale')) document.getElementById('input-cssScale').value = data.settings.cssScale;
+                }
+                        
                 if (data.settings) {
                     document.getElementById('cardWidthInput').value = data.settings.width || 1080;
                     document.getElementById('paddingRange').value = data.settings.padding || 90;
@@ -2988,6 +3009,7 @@ __ __: 글자 1단계 작게
 
             const width = widthInput.value;
             const globalAlign = document.getElementById('textAlignInput').value;
+            const cssScaleVal = document.getElementById('cssScale') ? document.getElementById('cssScale').value : 1;
 
             // 1. Set Container Dimensions
             area.style.width = width + "px";
@@ -3040,7 +3062,7 @@ __ __: 글자 1단계 작게
                         // 6. Construct CSS Variables
             const wncsScaleVal = document.getElementById('wncsScale').value / 100; // 35 -> 0.35
             
-            const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --sms-bg:${colors.sms_bg}; --sms-tx:${colors.sms_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px; --wncs-scale:${wncsScaleVal};`;
+            const cssVars = `--word-break:${document.getElementById('wordBreakInput').value}; --global-align:${globalAlign}; --base-weight:${fWeight}; --hl-bg:${colors.hlbg}; --hl-col:${colors.hltx}; --th-col:${colors.th}; --bd-col:${colors.bd}; --qt-col:${colors.qt}; --it-col:${activeItalicColor}; --it-weight:${itWeight}; --it-style:${itStyle}; --hr-col:${colors.hr}; --bb-l-bg:${colors.bb_l_bg}; --bb-l-tx:${colors.bb_l_tx}; --bb-r-bg:${colors.bb_r_bg}; --bb-r-tx:${colors.bb_r_tx}; --sms-bg:${colors.sms_bg}; --sms-tx:${colors.sms_tx}; --base-sz:${fSize}px; --base-lh:${lHeight}; --para-sp:${document.getElementById('paraSpacing').value}px; --wncs-scale:${wncsScaleVal}; --css-scale:${cssScaleVal};`;
             // 눈금 HTML 생성
             const rulers = `
             <div class="ruler-guide guide-left" style="top:50%" data-label="1/2"></div>
